@@ -3,6 +3,9 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
+  // シングルページアプリなのでpagesディレクトリを無効化
+  pages: false,
+
   modules: [
     // '@nuxt/ui', // 一旦コメントアウト（Tailwind依存のため）
     '@pinia/nuxt',
