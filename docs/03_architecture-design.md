@@ -1,705 +1,450 @@
-# アーキテクチャ設計 - 粉ミルク調乳タイマー
+# アーキテクチャ設計 - みるくっく (シングルページアプリ)
 
-## システム全体アーキテクチャ
-
-### 高レベルアーキテクチャ図
+## システム全体アーキテクチャ図
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        User (Browser)                           │
-└────────────────────────┬────────────────────────────────────────┘
-                         │
-                         ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                      Nuxt 3 Application                         │
-│  ┌──────────────┬──────────────┬─────────────┬────────────────┐ │
-│  │ Presentation │ Application  │   Domain    │ Infrastructure │ │
-│  │    Layer     │    Layer     │    Layer    │     Layer      │ │
-│  ├──────────────┼──────────────┼─────────────┼────────────────┤ │
-│  │ Pages/       │ Composables/ │ Utils/      │ Plugins/       │ │
-│  │ Components   │ Stores       │ Types       │ API            │ │
-│  └──────────────┴──────────────┴─────────────┴────────────────┘ │
-└─────────────────────────────────────────────────────────────────┘
-                         │
-                         ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                     Browser APIs & Storage                      │
-│  ┌───────────┬──────────────┬──────────────┬─────────────────┐ │
-│  │ IndexedDB │  localStorage│  Vibration   │  Notification   │ │
-│  └───────────┴──────────────┴──────────────┴─────────────────┘ │
-└─────────────────────────────────────────────────────────────────┘
-                         │
-                         ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                    Firebase Services (将来)                     │
-│  ┌───────────┬──────────────┬──────────────┬─────────────────┐ │
-│  │  Hosting  │   Firestore  │     FCM      │   Analytics     │ │
-│  └───────────┴──────────────┴──────────────┴─────────────────┘ │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────┐
+│           User (Browser)                    │
+└──────────────────┬──────────────────────────┘
+                   │
+                   ↓
+┌─────────────────────────────────────────────┐
+│      みるくっく (Nuxt 3 SPA)                │
+│                                             │
+│  ┌─────────────────────────────────────┐   │
+│  │         app.vue (エントリー)        │   │
+│  │    状態によってコンポーネント切替    │   │
+│  └─────────────────────────────────────┘   │
+│                   │                         │
+│      ┌────────────┼────────────┐           │
+│      ↓            ↓             ↓           │
+│  ┌────────┐  ┌────────┐  ┌──────────┐     │
+│  │ Stores │  │Compo-  │  │Thermal   │     │
+│  │ (Pinia)│  │nents   │  │Engine    │     │
+│  └────────┘  └────────┘  └──────────┘     │
+│      ↓                                      │
+│  ┌─────────────────────────────────┐       │
+│  │   LocalStorage / IndexedDB      │       │
+│  └─────────────────────────────────┘       │
+└─────────────────────────────────────────────┘
 ```
 
 ---
 
-## レイヤー別詳細設計
+## アプリケーション構造
 
-### Presentation Layer（プレゼンテーション層）
+### シングルページアプリケーション
 
-**責務**: UIの表示、ユーザー入力の受付
-
-#### Pages（ページコンポーネント）
+**コンセプト**: 1つのHTMLページで完結する軽量アプリ
 
 ```
-pages/
-├── index.vue                # ホーム画面
-├── prepare.vue              # 準備チェックリスト
-├── settings.vue             # 設定画面
-├── guide.vue                # 調乳ガイド（Step 1/2）
-├── cooling.vue              # 冷却方法選択
-├── timer.vue                # タイマー実行画面
-├── complete.vue             # 完了画面
-└── history.vue              # 履歴画面
-```
-
-#### Components（コンポーネント階層）
-
-```
-components/
-├── atoms/                   # 原子（最小単位）
-│   ├── Button.vue
-│   ├── Input.vue
-│   ├── Icon.vue
-│   ├── Badge.vue
-│   └── Slider.vue
+app.vue (メインアプリ)
+├─ components/              # UI部品
+│  ├─ IdleScreen.vue        # 待機画面
+│  ├─ PreparingScreen.vue   # 準備チェック
+│  ├─ MixingScreen.vue      # 混合ガイド
+│  ├─ CoolingScreen.vue     # タイマー実行
+│  ├─ CompletedScreen.vue   # 完了画面
+│  ├─ SettingsPanel.vue     # 設定(折りたたみ)
+│  └─ HistorySummary.vue    # 履歴サマリー
 │
-├── molecules/               # 分子（原子の組み合わせ）
-│   ├── TemperatureDisplay.vue    # 温度表示
-│   ├── ProgressBar.vue           # 進捗バー
-│   ├── ShakeButton.vue           # 揺らしボタン
-│   ├── CoolingMethodCard.vue     # 冷却方法カード
-│   └── StatCard.vue              # 統計カード
+├─ stores/                  # 状態管理
+│  ├─ session.ts            # セッション(現在の調乳)
+│  ├─ settings.ts           # ユーザー設定
+│  └─ history.ts            # 履歴データ
 │
-├── organisms/               # 有機体（複雑な機能）
-│   ├── bottle/
-│   │   ├── BottleVisual.vue      # 哺乳瓶ビジュアル
-│   │   └── TemperatureGradient.vue # 温度グラデーション
-│   ├── timer/
-│   │   ├── TimerDisplay.vue      # タイマー表示
-│   │   ├── TimerControls.vue     # タイマー操作
-│   │   ├── TemperatureChart.vue  # 温度グラフ
-│   │   └── ShakeReminder.vue     # 揺らしリマインダー
-│   ├── settings/
-│   │   ├── VolumeSelector.vue    # ミルク量選択
-│   │   ├── MaterialSelector.vue  # 材質選択
-│   │   └── TargetTempSlider.vue  # 目標温度スライダー
-│   └── history/
-│       ├── SessionList.vue       # セッションリスト
-│       └── StatisticsPanel.vue   # 統計パネル
+├─ composables/             # ロジック
+│  └─ useThermalEngine.ts   # 熱力学計算
 │
-└── templates/               # テンプレート（将来的に使用）
-    ├── TimerTemplate.vue
-    └── SettingsTemplate.vue
+├─ utils/                   # ユーティリティ
+│  └─ thermal/              # 熱計算エンジン
+│     ├─ constants.ts       # 物理定数
+│     ├─ materials.ts       # 材質データ
+│     ├─ methods.ts         # 冷却方法
+│     └─ calculator.ts      # 計算関数
+│
+└─ types/                   # TypeScript型
+   ├─ thermal.ts            # 熱計算の型
+   └─ session.ts            # セッションの型
 ```
 
-### Application Layer（アプリケーション層）
+**pages/ ディレクトリは使用しない** ❌
 
-**責務**: ビジネスロジックの組み立て、状態管理
+---
 
-#### Composables（再利用可能なロジック）
+## 状態管理アーキテクチャ
+
+### Piniaストア
+
+#### 1. Session Store (セッション管理)
 
 ```typescript
-// composables/useThermalEngine.ts
-export const useThermalEngine = () => {
-  /**
-   * 熱力学計算エンジン
-   * - 温度計算
-   * - 冷却時間予測
-   * - 冷却定数計算
-   */
-  const calculateTemperature = (params: ThermalParams): number => {
-    const k = calculateCoolingConstant(params);
-    return calculateNewtonCooling(
-      params.initialTemp,
-      params.elapsedTime,
-      params.method.ambientTemp,
-      k
-    );
-  };
+// stores/session.ts
+{
+  // 現在の状態
+  status: 'idle' | 'preparing' | 'mixing' | 'cooling' | 'completed',
 
-  const predictCoolingTime = (params: PredictParams): number => {
-    const k = calculateCoolingConstant(params);
-    return calculateTimeToTarget(
-      params.initialTemp,
-      params.targetTemp,
-      params.method.ambientTemp,
-      k
-    );
-  };
+  // セッションデータ
+  volume: 140,
+  materialId: 'glass',
+  coolingMethodId: 'ice_stir',
+  targetTemp: 38,
 
-  return { calculateTemperature, predictCoolingTime };
-};
+  // 熱計算結果
+  thermalResult: {
+    hotWaterVolume: 108,
+    coldWaterVolume: 32,
+    initialMixTemp: 46.6,
+    predictedCoolingTime: 87,
+  },
+
+  // 冷却中のデータ
+  cooling: {
+    startTime: Date | null,
+    elapsedSeconds: 0,
+    currentTemp: 46.6,
+  },
+
+  // UI状態
+  ui: {
+    showSettings: false,
+  }
+}
 ```
 
-```typescript
-// composables/useTimer.ts
-export const useTimer = () => {
-  /**
-   * タイマー管理
-   * - 開始/停止/リセット
-   * - 経過時間管理
-   * - リアルタイム温度更新
-   */
-  const timerStore = useTimerStore();
-  const { calculateTemperature } = useThermalEngine();
+**主要アクション**:
+- `startSession()` - 新しいセッションを開始
+- `startCooling()` - 冷却開始
+- `updateElapsedTime()` - 経過時間更新
+- `completeSession()` - セッション完了
+- `cancelSession()` - キャンセル
 
-  const start = () => {
-    timerStore.start();
-    startInterval();
-  };
-
-  const pause = () => {
-    timerStore.pause();
-    stopInterval();
-  };
-
-  const currentTemp = computed(() => {
-    return calculateTemperature({
-      initialTemp: timerStore.initialTemp,
-      elapsedTime: timerStore.elapsedTime / 60,
-      material: timerStore.material,
-      method: timerStore.method,
-    });
-  });
-
-  return { start, pause, reset, currentTemp };
-};
-```
-
-```typescript
-// composables/useVibration.ts
-export const useVibration = () => {
-  /**
-   * バイブレーション管理
-   * - 揺らしリマインダー
-   * - 適温到達通知
-   */
-  const vibrate = (pattern: number | number[]) => {
-    if ('vibrate' in navigator) {
-      navigator.vibrate(pattern);
-    }
-  };
-
-  const vibrateShakeReminder = () => vibrate(200);
-  const vibrateComplete = () => vibrate([200, 100, 200, 100, 200]);
-
-  return { vibrate, vibrateShakeReminder, vibrateComplete };
-};
-```
-
-```typescript
-// composables/useNotification.ts
-export const useNotification = () => {
-  /**
-   * 通知管理
-   * - 適温到達通知
-   * - パーミッション管理
-   */
-  const requestPermission = async (): Promise<boolean> => {
-    if ('Notification' in window) {
-      const permission = await Notification.requestPermission();
-      return permission === 'granted';
-    }
-    return false;
-  };
-
-  const notifyComplete = (temp: number) => {
-    if (Notification.permission === 'granted') {
-      new Notification('適温になりました！', {
-        body: `現在の温度: ${temp.toFixed(1)}°C`,
-        icon: '/icons/icon-192.png',
-        vibrate: [200, 100, 200, 100, 200],
-      });
-    }
-  };
-
-  return { requestPermission, notifyComplete };
-};
-```
-
-```typescript
-// composables/useHistory.ts
-export const useHistory = () => {
-  /**
-   * 履歴管理
-   * - セッション保存
-   * - 統計計算
-   * - データ取得
-   */
-  const saveSession = async (session: MilkSession): Promise<void> => {
-    await db.sessions.add(session);
-  };
-
-  const getSessions = async (limit = 100): Promise<MilkSession[]> => {
-    return await db.sessions
-      .orderBy('timestamp')
-      .reverse()
-      .limit(limit)
-      .toArray();
-  };
-
-  const getStatistics = async (): Promise<Statistics> => {
-    const sessions = await getSessions();
-    return {
-      averageTime: calculateAverage(sessions.map(s => s.actualTime || 0)),
-      totalCount: sessions.length,
-      mostUsedMethod: findMostCommon(sessions.map(s => s.coolingMethodId)),
-    };
-  };
-
-  return { saveSession, getSessions, getStatistics };
-};
-```
-
-#### Stores（Pinia）
+#### 2. Settings Store (設定管理)
 
 ```typescript
 // stores/settings.ts
-export const useSettingsStore = defineStore('settings', () => {
-  // State
-  const volume = ref(140);
-  const bottleMaterialId = ref('glass');
-  const targetTemp = ref(38);
-  const roomTemp = ref(20);
-  const coldWaterTemp = ref(5);
+{
+  defaultVolume: 140,
+  defaultMaterialId: 'glass',
+  defaultCoolingMethodId: 'ice_stir',
+  defaultTargetTemp: 38,
+  defaultColdWaterTemp: 20,
+  defaultTargetMixTemp: 70,
 
-  // Getters
-  const material = computed(() => MATERIALS[bottleMaterialId.value]);
+  // UI設定
+  nightMode: false,
+  soundEnabled: true,
+  vibrationEnabled: true,
 
-  // Actions
-  const updateVolume = (newVolume: number) => {
-    volume.value = newVolume;
-  };
-
-  return {
-    volume,
-    bottleMaterialId,
-    targetTemp,
-    roomTemp,
-    coldWaterTemp,
-    material,
-    updateVolume,
-  };
-}, {
-  persist: true, // localStorage に自動保存
-});
+  // アラート
+  alertEnabled: true,
+  alertBeforeMinutes: 1,
+}
 ```
 
-```typescript
-// stores/timer.ts
-export const useTimerStore = defineStore('timer', () => {
-  // State
-  const isRunning = ref(false);
-  const elapsedTime = ref(0); // 秒
-  const initialTemp = ref(46.6);
-  const targetTemp = ref(38);
-  const shakeCount = ref(0);
-  const methodId = ref('ice_stir');
+**永続化**: LocalStorageに自動保存
 
-  // Getters
-  const method = computed(() => COOLING_METHODS[methodId.value]);
-  const material = computed(() => {
-    const settings = useSettingsStore();
-    return settings.material;
-  });
-
-  // Actions
-  const start = () => {
-    isRunning.value = true;
-  };
-
-  const pause = () => {
-    isRunning.value = false;
-  };
-
-  const reset = () => {
-    isRunning.value = false;
-    elapsedTime.value = 0;
-    shakeCount.value = 0;
-  };
-
-  const incrementShake = () => {
-    shakeCount.value += 1;
-  };
-
-  return {
-    isRunning,
-    elapsedTime,
-    initialTemp,
-    targetTemp,
-    shakeCount,
-    methodId,
-    method,
-    material,
-    start,
-    pause,
-    reset,
-    incrementShake,
-  };
-});
-```
+#### 3. History Store (履歴管理)
 
 ```typescript
 // stores/history.ts
-export const useHistoryStore = defineStore('history', () => {
-  const sessions = ref<MilkSession[]>([]);
-
-  const loadSessions = async () => {
-    const { getSessions } = useHistory();
-    sessions.value = await getSessions();
-  };
-
-  const addSession = async (session: MilkSession) => {
-    const { saveSession } = useHistory();
-    await saveSession(session);
-    await loadSessions();
-  };
-
-  return { sessions, loadSessions, addSession };
-});
-```
-
----
-
-### Domain Layer（ドメイン層）
-
-**責務**: 純粋な計算ロジック、ビジネスルール
-
-#### Utils（ユーティリティ関数）
-
-```
-utils/
-├── thermal/
-│   ├── constants.ts         # 物理定数
-│   ├── materials.ts         # 材質パラメータ
-│   ├── methods.ts           # 冷却方法パラメータ
-│   └── calculator.ts        # 温度計算関数
-├── color.ts                 # 色補間関数
-└── format.ts                # フォーマット関数
-```
-
-#### Types（型定義）
-
-```
-types/
-├── thermal.ts               # 熱力学関連の型
-├── session.ts               # セッション関連の型
-├── bottle.ts                # 哺乳瓶関連の型
-└── cooling.ts               # 冷却方法関連の型
-```
-
----
-
-### Infrastructure Layer（インフラ層）
-
-**責務**: 外部API、データベース、ブラウザAPI
-
-#### Plugins
-
-```typescript
-// plugins/dexie.client.ts
-import Dexie from 'dexie';
-
-class MilkTimerDB extends Dexie {
-  sessions!: Table<MilkSession>;
-
-  constructor() {
-    super('MilkTimerDB');
-    this.version(1).stores({
-      sessions: '++id, timestamp, volume, coolingMethodId',
-    });
-  }
+{
+  sessions: MilkSession[], // 最大100件
 }
-
-export const db = new MilkTimerDB();
 ```
 
-```typescript
-// plugins/firebase.client.ts
-import { initializeApp } from 'firebase/app';
-
-export default defineNuxtPlugin(() => {
-  const config = useRuntimeConfig();
-  const app = initializeApp(config.public.firebase);
-
-  return {
-    provide: {
-      firebase: app,
-    },
-  };
-});
-```
+**永続化**: LocalStorageに自動保存
 
 ---
 
-## データフロー図
+## コンポーネント設計
 
-### タイマー実行時のデータフロー
+### 状態別画面コンポーネント
 
-```
-┌─────────────┐
-│ User Action │
-│ (Start)     │
-└──────┬──────┘
-       │
-       ↓
-┌──────────────────┐
-│ TimerControls    │  Component
-│ @click="start"   │
-└──────┬───────────┘
-       │
-       ↓
-┌──────────────────┐
-│ useTimer()       │  Composable
-│ start()          │
-└──────┬───────────┘
-       │
-       ↓
-┌──────────────────┐
-│ useTimerStore()  │  Store (Pinia)
-│ isRunning=true   │
-└──────┬───────────┘
-       │
-       ↓
-┌──────────────────┐
-│ setInterval()    │  Timer Loop
-│ (1秒ごと)        │
-└──────┬───────────┘
-       │
-       ↓
-┌──────────────────┐
-│ useThermalEngine │  Composable
-│ calculateTemp()  │
-└──────┬───────────┘
-       │
-       ↓
-┌──────────────────┐
-│ calculator.ts    │  Utils
-│ ニュートンの     │
-│ 冷却法則         │
-└──────┬───────────┘
-       │
-       ↓
-┌──────────────────┐
-│ Computed         │
-│ currentTemp      │
-└──────┬───────────┘
-       │
-       ↓
-┌──────────────────┐
-│ Template         │
-│ {{ currentTemp }}│  UI Update
-└──────────────────┘
+各画面は独立したVueコンポーネント:
+
+```vue
+<!-- app.vue -->
+<script setup>
+const sessionStore = useSessionStore();
+const status = computed(() => sessionStore.status);
+</script>
+
+<template>
+  <div class="app">
+    <Transition name="fade" mode="out-in">
+      <IdleScreen v-if="status === 'idle'" />
+      <PreparingScreen v-else-if="status === 'preparing'" />
+      <MixingScreen v-else-if="status === 'mixing'" />
+      <CoolingScreen v-else-if="status === 'cooling'" />
+      <CompletedScreen v-else-if="status === 'completed'" />
+    </Transition>
+  </div>
+</template>
 ```
 
-### 履歴保存時のデータフロー
+### コンポーネント間の通信
 
-```
-┌─────────────┐
-│ User Action │
-│ (Complete)  │
-└──────┬──────┘
-       │
-       ↓
-┌──────────────────┐
-│ Complete Page    │
-│ save()           │
-└──────┬───────────┘
-       │
-       ↓
-┌──────────────────┐
-│ useHistory()     │  Composable
-│ saveSession()    │
-└──────┬───────────┘
-       │
-       ↓
-┌──────────────────┐
-│ Dexie.js         │  IndexedDB
-│ db.sessions.add()│
-└──────┬───────────┘
-       │
-       ↓
-┌──────────────────┐
-│ IndexedDB        │  Browser Storage
-│ (Persistent)     │
-└──────────────────┘
-```
+- **Piniaストア経由**: コンポーネント間で状態を共有
+- **Props/Emitsは不要**: すべてストアで管理
+- **シンプルな依存関係**: 各コンポーネントはストアのみに依存
 
 ---
 
-## コンポーネント依存関係図
+## 熱計算エンジン
 
-```
-pages/timer.vue
-    ├── organisms/timer/TimerDisplay.vue
-    │   ├── molecules/TemperatureDisplay.vue
-    │   │   └── atoms/Badge.vue
-    │   └── molecules/ProgressBar.vue
-    ├── organisms/bottle/BottleVisual.vue
-    │   └── organisms/bottle/TemperatureGradient.vue
-    ├── organisms/timer/TemperatureChart.vue
-    ├── organisms/timer/ShakeReminder.vue
-    │   ├── molecules/ShakeButton.vue
-    │   │   └── atoms/Button.vue
-    │   └── atoms/Icon.vue
-    └── organisms/timer/TimerControls.vue
-        └── atoms/Button.vue
-```
+### 設計原則
 
----
-
-## 熱力学計算エンジンの詳細設計
-
-### クラス図（概念）
-
-```
-┌─────────────────────────┐
-│ ThermalCalculator       │
-├─────────────────────────┤
-│ + calculateTemp()       │
-│ + predictTime()         │
-│ + getCoolingConstant()  │
-└─────────────────────────┘
-         ↓ uses
-┌─────────────────────────┐
-│ BottleMaterial          │
-├─────────────────────────┤
-│ - thermalConductivity   │
-│ - thickness             │
-│ - density               │
-│ - specificHeat          │
-└─────────────────────────┘
-
-┌─────────────────────────┐
-│ CoolingMethod           │
-├─────────────────────────┤
-│ - ambientTemp           │
-│ - velocity              │
-│ - baseH                 │
-│ - velocityFactor        │
-└─────────────────────────┘
-```
+- **純粋関数**: 副作用なし
+- **テスト可能**: 全関数に単体テスト
+- **科学的正確性**: ニュートンの冷却法則に基づく
 
 ### 計算フロー
 
 ```
-Input: initialTemp, targetTemp, volume, material, method
-   │
+1. ユーザー入力
    ↓
-calculateCoolingConstant(volume, material, method)
-   │
-   ├─> 質量計算: m = (volume / 1000) * WATER_DENSITY
-   │
-   ├─> 表面積計算: A = 2πrh
-   │
-   ├─> 熱伝達係数: h = baseH * sqrt(velocity / 0.1 + 1)
-   │
-   └─> 冷却定数: k = (h * A) / (m * c)
-   │
+2. calculateMilkPreparation()
+   - お湯・湯冷まし量を計算
+   - 混合後の温度を計算
+   - 冷却定数を計算
+   - 冷却時間を予測
    ↓
-calculateTimeToTarget(initialTemp, targetTemp, ambient, k)
-   │
-   └─> t = -ln((T_target - T_ambient) / (T_initial - T_ambient)) / k
-   │
+3. セッション開始
    ↓
-Output: 予測時間（分）
+4. 冷却中: 1秒ごとに
+   - calculateCurrentTemp() で現在温度を計算
+   - calculateRemainingTime() で残り時間を更新
+   ↓
+5. 目標温度到達
+   ↓
+6. セッション完了・履歴保存
+```
+
+### 主要関数
+
+```typescript
+// composables/useThermalEngine.ts
+
+// 調乳全体の計算
+calculateMilkPreparation(params)
+  → { hotWaterVolume, coldWaterVolume, initialMixTemp, predictedCoolingTime }
+
+// リアルタイム温度計算
+calculateCurrentTemp(initialTemp, elapsedTime, ambientTemp, k)
+  → 現在温度
+
+// 残り時間計算
+calculateRemainingTime(currentTemp, targetTemp, ambientTemp, k)
+  → 残り時間(分)
 ```
 
 ---
 
-## ルーティング設計
+## データフロー
 
-### ページ遷移図（Mermaid）
+### 1. 開始時
 
-```mermaid
-graph TD
-    A[ホーム] --> B[準備チェックリスト]
-    A --> C[設定]
-    A --> D[履歴]
-    A --> E[調乳ガイド]
-    B --> E
-    E --> F[調乳ガイド Step2]
-    F --> G[冷却方法選択]
-    G --> H[タイマー実行]
-    H --> I[完了画面]
-    I --> A
-    I --> E
-    C --> A
-    D --> A
+```
+User Input (ミルク量、設定)
+  ↓
+Settings Store (デフォルト値取得)
+  ↓
+Thermal Engine (熱計算)
+  ↓
+Session Store (セッション作成)
+  ↓
+UI更新
 ```
 
-### ルート定義
+### 2. 冷却中
 
-```typescript
-// Nuxt 3 の自動ルーティング
-{
-  '/': 'pages/index.vue',
-  '/prepare': 'pages/prepare.vue',
-  '/settings': 'pages/settings.vue',
-  '/guide': 'pages/guide.vue',
-  '/cooling': 'pages/cooling.vue',
-  '/timer': 'pages/timer.vue',
-  '/complete': 'pages/complete.vue',
-  '/history': 'pages/history.vue',
-}
+```
+タイマー (1秒ごと)
+  ↓
+Session Store (経過時間更新)
+  ↓
+Thermal Engine (温度計算)
+  ↓
+UI更新 (リアクティブ)
+```
+
+### 3. 完了時
+
+```
+目標温度到達
+  ↓
+Session Store (セッション完了)
+  ↓
+History Store (履歴保存)
+  ↓
+LocalStorage (永続化)
+  ↓
+UI更新 (完了画面)
 ```
 
 ---
 
-## 拡張性の考慮
+## ストレージ戦略
 
-### 新しい冷却方法の追加
+### LocalStorage
+
+**用途**: 軽量データの永続化
+
+```javascript
+// 保存するデータ
+localStorage.setItem('milcook_settings', JSON.stringify(settings));
+localStorage.setItem('milcook_history', JSON.stringify(sessions));
+```
+
+**容量**: ~5MB (十分)
+
+### IndexedDB (将来)
+
+大量の履歴データが必要になった場合:
+- Dexie.jsを使用
+- 1000件以上の履歴
+- 統計データのキャッシュ
+
+---
+
+## パフォーマンス最適化
+
+### 1. リアクティビティ
 
 ```typescript
-// utils/thermal/methods.ts に追加するだけ
-export const COOLING_METHODS = {
-  // 既存
-  ice_stir: { /* ... */ },
+// computed で自動更新
+const currentTemp = computed(() => {
+  return calculateCurrentTemp(
+    initialTemp,
+    elapsedMinutes,
+    ambientTemp,
+    coolingConstant
+  );
+});
+```
 
-  // 新規追加
-  ultrasonic_bath: {
-    id: 'ultrasonic_bath',
-    name: '超音波冷却',
-    description: '超音波で均一冷却',
-    ambientTemp: 10,
-    velocity: 0.2,
-    baseH: 250,
-    velocityFactor: 1.8,
-    recommendedPriority: 2,
-  },
+### 2. タイマーの最適化
+
+```typescript
+// setIntervalではなくrequestAnimationFrameを検討
+let animationId: number;
+
+const updateTimer = () => {
+  elapsedSeconds.value++;
+  animationId = requestAnimationFrame(updateTimer);
 };
-
-// 既存コードは変更不要（開放閉鎖の原則）
 ```
 
-### 新しい材質の追加
+### 3. メモリ管理
 
-```typescript
-// utils/thermal/materials.ts に追加
-export const MATERIALS = {
-  // 既存
-  glass: { /* ... */ },
+- コンポーネントのアンマウント時にタイマーをクリア
+- 不要な履歴データは削除(最大100件)
 
-  // 新規追加
-  silicon: {
-    id: 'silicon',
-    name: 'シリコン',
-    thermalConductivity: 0.15,
-    thickness: 0.004,
-    density: 1100,
-    specificHeat: 1300,
-  },
-};
+---
+
+## セキュリティ
+
+### クライアントサイドのみ
+
+- サーバー不要 → セキュリティリスク低
+- ユーザーデータは端末内のみ
+- 外部API呼び出しなし
+
+### データ保護
+
+- LocalStorageは同一オリジンのみアクセス可
+- センシティブな情報なし(ミルク量、時刻のみ)
+
+---
+
+## テスト戦略
+
+### 1. 単体テスト (Vitest)
+
+```
+utils/thermal/*.ts         → 30テスト (完了)
+stores/*.ts                → 各ストアのアクション
+composables/*.ts           → ロジック
+```
+
+### 2. コンポーネントテスト
+
+```
+components/*.vue           → UIの動作確認
+```
+
+### 3. E2Eテスト (Playwright)
+
+```
+完全な調乳フロー           → 待機→準備→混合→冷却→完了
+設定の永続化               → 設定→リロード→確認
+履歴の保存                 → セッション完了→履歴確認
 ```
 
 ---
 
-このアーキテクチャにより、保守性・拡張性・テスト容易性の高いシステムを実現します。
+## デプロイメント
+
+### 静的ホスティング
+
+Nuxt 3のSSG(静的生成)機能を使用:
+
+```bash
+npm run generate
+```
+
+→ `.output/public/` に静的ファイル生成
+
+### ホスティング先
+
+- Vercel (推奨)
+- Netlify
+- Firebase Hosting
+- GitHub Pages
+
+**すべて無料枠で運用可能**
+
+---
+
+## 拡張性
+
+### フェーズ2以降の追加機能
+
+現在のアーキテクチャで対応可能:
+
+1. **PWA化**: Service Workerを追加
+2. **通知**: Web Notification API
+3. **音声**: Web Audio API
+4. **データ同期**: Firebase (オプション)
+5. **統計グラフ**: Chart.js (既にインストール済み)
+
+### 変更不要
+
+- **コアロジック**: 熱計算エンジンはそのまま
+- **ストア**: 拡張可能な設計
+- **コンポーネント**: 独立して追加可能
+
+---
+
+## まとめ
+
+### アーキテクチャの特徴
+
+✅ **シンプル**: 1つのapp.vueで完結
+✅ **高速**: ページ遷移なし
+✅ **テスト可能**: 純粋関数ベース
+✅ **拡張可能**: モジュール構造
+✅ **メンテナブル**: 明確な責務分離
+
+### 技術選択の理由
+
+| 技術 | 理由 |
+|------|------|
+| Nuxt 3 | Vue3 + 最新機能 + SSG |
+| Pinia | シンプルな状態管理 |
+| TypeScript | 型安全性 |
+| Vitest | 高速テスト |
+| LocalStorage | 永続化(シンプル) |
+
+このアーキテクチャにより、**シンプルで高速、メンテナンスしやすいアプリ**を実現します。
