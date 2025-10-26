@@ -1,0 +1,26 @@
+{
+  "project": {
+    "name": "milcook",
+    "version": "0.1.0",
+    "description": "科学的根拠に基づいた粉ミルク調乳タイマー"
+  },
+  "development": {
+    "node_version": "20.x",
+    "package_manager": "pnpm",
+    "port": 3000
+  },
+  "phases": {
+    "current": "phase-0",
+    "completed": []
+  },
+  "rules": {
+    "enforce_types": true,
+    "require_tests": true,
+    "max_function_lines": 50,
+    "max_file_lines": 300
+  },
+  "code_review": {
+    "require_checklist": true,
+    "require_documentation_update": true
+  }
+}
