@@ -198,10 +198,18 @@ const handleStop = () => {
 
       <footer class="footer">
         <div class="button-group">
-          <button class="pause-button" @click="handlePauseResume">
+          <button
+            class="pause-button"
+            @click="handlePauseResume"
+            :aria-label="isPaused ? 'タイマーを再開' : 'タイマーを一時停止'"
+          >
             {{ isPaused ? '▶️ 再開' : '⏸️ 一時停止' }}
           </button>
-          <button class="stop-button" @click="handleStop">
+          <button
+            class="stop-button"
+            @click="handleStop"
+            aria-label="タイマーを終了してホームに戻る"
+          >
             ⏹️ 終了
           </button>
         </div>

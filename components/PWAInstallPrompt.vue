@@ -58,10 +58,10 @@ const handleDismiss = () => {
           <div class="prompt-desc">オフラインでも使えて、すぐに起動できます</div>
         </div>
         <div class="prompt-actions">
-          <button class="install-button" @click="handleInstall">
+          <button class="install-button" @click="handleInstall" aria-label="アプリをホーム画面に追加">
             追加
           </button>
-          <button class="dismiss-button" @click="handleDismiss">
+          <button class="dismiss-button" @click="handleDismiss" aria-label="インストールプロンプトを閉じる">
             後で
           </button>
         </div>

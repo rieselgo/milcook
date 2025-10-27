@@ -44,7 +44,7 @@ const formatTime = (minutes: number | null) => {
         <!-- ヘッダー -->
         <header class="modal-header">
           <h2 class="modal-title">📊 調乳履歴</h2>
-          <button class="close-button" @click="emit('close')">×</button>
+          <button class="close-button" @click="emit('close')" aria-label="履歴モーダルを閉じる">×</button>
         </header>
 
         <!-- 統計情報 -->
@@ -101,6 +101,7 @@ const formatTime = (minutes: number | null) => {
             v-if="historyStore.hasHistory"
             class="clear-button"
             @click="() => { if (confirm('全ての履歴を削除しますか？')) historyStore.clearHistory(); }"
+            aria-label="全ての調乳履歴を削除"
           >
             全削除
           </button>

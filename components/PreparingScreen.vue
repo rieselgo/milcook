@@ -57,10 +57,10 @@ const handleCancel = () => {
       </main>
 
       <footer class="footer">
-        <button class="next-button" @click="handleNext">
+        <button class="next-button" @click="handleNext" aria-label="次のステップへ進む">
           次へ
         </button>
-        <button class="cancel-button" @click="handleCancel">
+        <button class="cancel-button" @click="handleCancel" aria-label="準備をキャンセルしてホームに戻る">
           キャンセル
         </button>
       </footer>

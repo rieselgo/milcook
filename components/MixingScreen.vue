@@ -125,29 +125,33 @@ const handleCancel = () => {
             <h3 class="section-title">🌡️ お湯</h3>
             <div class="input-row">
               <div class="input-group">
-                <label class="input-label">温度</label>
+                <label for="hot-water-temp" class="input-label">温度</label>
                 <div class="input-with-unit">
                   <input
+                    id="hot-water-temp"
                     type="number"
                     v-model.number="hotWaterTemp"
                     min="40"
                     max="100"
                     step="1"
                     class="input-field"
+                    aria-label="お湯の温度"
                   />
                   <span class="unit">°C</span>
                 </div>
               </div>
               <div class="input-group">
-                <label class="input-label">量</label>
+                <label for="hot-water-volume" class="input-label">量</label>
                 <div class="input-with-unit">
                   <input
+                    id="hot-water-volume"
                     type="number"
                     v-model.number="hotWaterVolume"
                     min="0"
                     max="300"
                     step="10"
                     class="input-field"
+                    aria-label="お湯の量"
                   />
                   <span class="unit">ml</span>
                 </div>
@@ -160,29 +164,33 @@ const handleCancel = () => {
             <h3 class="section-title">💧 湯冷まし</h3>
             <div class="input-row">
               <div class="input-group">
-                <label class="input-label">温度</label>
+                <label for="cold-water-temp" class="input-label">温度</label>
                 <div class="input-with-unit">
                   <input
+                    id="cold-water-temp"
                     type="number"
                     v-model.number="coldWaterTemp"
                     min="0"
                     max="40"
                     step="1"
                     class="input-field"
+                    aria-label="湯冷ましの温度"
                   />
                   <span class="unit">°C</span>
                 </div>
               </div>
               <div class="input-group">
-                <label class="input-label">量</label>
+                <label for="cold-water-volume" class="input-label">量</label>
                 <div class="input-with-unit">
                   <input
+                    id="cold-water-volume"
                     type="number"
                     v-model.number="coldWaterVolume"
                     min="0"
                     max="300"
                     step="10"
                     class="input-field"
+                    aria-label="湯冷ましの量"
                   />
                   <span class="unit">ml</span>
                 </div>
@@ -193,7 +201,7 @@ const handleCancel = () => {
           <!-- 粉ミルク確認 -->
           <div class="powder-check">
             <label class="checkbox-label">
-              <input type="checkbox" v-model="powderDissolved" class="checkbox" />
+              <input type="checkbox" v-model="powderDissolved" class="checkbox" aria-label="粉ミルクを溶かしました" />
               <span>粉ミルクを溶かしました</span>
             </label>
           </div>
@@ -226,10 +234,11 @@ const handleCancel = () => {
           :class="{ disabled: !allInputsValid }"
           :disabled="!allInputsValid"
           @click="handleStartCooling"
+          aria-label="入力内容を確定して冷却を開始する"
         >
           冷却を開始する
         </button>
-        <button class="cancel-button" @click="handleCancel">
+        <button class="cancel-button" @click="handleCancel" aria-label="調乳をキャンセルしてホームに戻る">
           キャンセル
         </button>
       </footer>

@@ -65,14 +65,22 @@ const updateTargetTemp = (event: Event) => {
     <div class="container">
       <!-- ヘッダー -->
       <header class="header">
-        <button class="history-icon-button" @click="showHistory = true">
+        <button
+          class="history-icon-button"
+          @click="showHistory = true"
+          aria-label="履歴を表示"
+        >
           📊
         </button>
         <div>
           <h1 class="title">🍼 みるくっく</h1>
           <p class="subtitle">科学的根拠に基づいた調乳タイマー</p>
         </div>
-        <button class="theme-toggle-button" @click="toggleColorMode" :title="`カラーモード: ${colorMode}`">
+        <button
+          class="theme-toggle-button"
+          @click="toggleColorMode"
+          :aria-label="`カラーモード: ${colorMode === 'light' ? 'ライト' : colorMode === 'dark' ? 'ダーク' : '自動'}`"
+        >
           {{ colorMode === 'light' ? '☀️' : colorMode === 'dark' ? '🌙' : '🔄' }}
         </button>
       </header>
@@ -81,8 +89,9 @@ const updateTargetTemp = (event: Event) => {
       <main class="main">
         <!-- ミルク量設定 -->
         <section class="volume-section">
-          <div class="volume-display">{{ volume }}ml</div>
+          <label for="volume-slider" class="volume-display">{{ volume }}ml</label>
           <input
+            id="volume-slider"
             type="range"
             min="60"
             max="240"
@@ -90,6 +99,7 @@ const updateTargetTemp = (event: Event) => {
             :value="volume"
             @input="updateVolume"
             class="volume-slider"
+            aria-label="ミルク量を選択"
           />
           <div class="volume-labels">
             <span>60ml</span>
@@ -110,12 +120,17 @@ const updateTargetTemp = (event: Event) => {
         </section>
 
         <!-- 開始ボタン -->
-        <button class="start-button" @click="handleStart">
+        <button class="start-button" @click="handleStart" aria-label="ミルク作りを開始する">
           開始する
         </button>
 
         <!-- 詳細設定トグル -->
-        <button class="settings-toggle" @click="showSettings = !showSettings">
+        <button
+          class="settings-toggle"
+          @click="showSettings = !showSettings"
+          :aria-label="showSettings ? '詳細設定を閉じる' : '詳細設定を開く'"
+          :aria-expanded="showSettings"
+        >
           ⚙️ 詳細設定
           <span class="toggle-icon">{{ showSettings ? '▲' : '▼' }}</span>
         </button>
@@ -133,6 +148,8 @@ const updateTargetTemp = (event: Event) => {
                   class="option-button"
                   :class="{ active: settingsStore.settings.defaultMaterialId === material.id }"
                   @click="updateMaterial(material.id)"
+                  :aria-label="`哺乳瓶の材質を${material.name}に設定`"
+                  :aria-pressed="settingsStore.settings.defaultMaterialId === material.id"
                 >
                   <div class="option-name">{{ material.name }}</div>
                   <div class="option-desc">{{ material.description }}</div>
@@ -150,6 +167,8 @@ const updateTargetTemp = (event: Event) => {
                   class="option-button"
                   :class="{ active: settingsStore.settings.defaultCoolingMethodId === method.id }"
                   @click="updateMethod(method.id)"
+                  :aria-label="`冷却方法を${method.name}に設定`"
+                  :aria-pressed="settingsStore.settings.defaultCoolingMethodId === method.id"
                 >
                   <div class="option-name">
                     {{ method.name }}
@@ -172,6 +191,10 @@ const updateTargetTemp = (event: Event) => {
                   :value="settingsStore.settings.defaultTargetTemp"
                   @input="updateTargetTemp"
                   class="temp-slider"
+                  aria-label="目標温度を設定"
+                  :aria-valuenow="settingsStore.settings.defaultTargetTemp"
+                  aria-valuemin="35"
+                  aria-valuemax="42"
                 />
                 <div class="temp-display">{{ settingsStore.settings.defaultTargetTemp }}°C</div>
                 <div class="temp-labels">

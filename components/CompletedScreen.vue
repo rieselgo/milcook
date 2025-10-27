@@ -72,10 +72,10 @@ const handleHome = () => {
       </main>
 
       <footer class="footer">
-        <button class="again-button" @click="handleAgain">
+        <button class="again-button" @click="handleAgain" aria-label="もう一度ミルクを作る">
           もう一度作る
         </button>
-        <button class="home-button" @click="handleHome">
+        <button class="home-button" @click="handleHome" aria-label="ホーム画面に戻る">
           ホームに戻る
         </button>
       </footer>
