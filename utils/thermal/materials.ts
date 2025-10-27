@@ -10,7 +10,9 @@ export const MATERIALS: Record<string, BottleMaterial> = {
   glass: {
     id: 'glass',
     name: 'ガラス',
-    thermalConductivity: 1.0, // W/(m·K) - ガラスの熱伝導率
+    // 熱伝導補正係数（相対値、ガラスを基準=1.0）
+    // 哺乳瓶では材質の影響は小さく、5-10%程度の差
+    thermalConductivity: 1.0, // ガラス（基準）
     thickness: 0.002, // m (2mm)
     density: 2500, // kg/m³
     specificHeat: 840, // J/(kg·K)
@@ -18,7 +20,8 @@ export const MATERIALS: Record<string, BottleMaterial> = {
   plastic: {
     id: 'plastic',
     name: 'プラスチック',
-    thermalConductivity: 0.2, // W/(m·K) - プラスチックは熱伝導率が低い
+    // プラスチックは断熱性が高いが、薄い壁なので影響は小さい
+    thermalConductivity: 0.95, // ガラスの95%（やや遅い）
     thickness: 0.003, // m (3mm) - ガラスより厚い
     density: 1200, // kg/m³
     specificHeat: 1200, // J/(kg·K)
@@ -26,7 +29,8 @@ export const MATERIALS: Record<string, BottleMaterial> = {
   ppsu: {
     id: 'ppsu',
     name: 'PPSU',
-    thermalConductivity: 0.26, // W/(m·K) - プラスチックより少し高い
+    // PPSUはプラスチックとほぼ同じ
+    thermalConductivity: 0.93, // ガラスの93%（プラスチックよりやや遅い）
     thickness: 0.003, // m (3mm)
     density: 1290, // kg/m³
     specificHeat: 1100, // J/(kg·K)
