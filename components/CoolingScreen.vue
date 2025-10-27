@@ -121,12 +121,32 @@ const handleCancel = () => {
       </header>
 
       <main class="main">
-        <!-- 温度表示 -->
-        <div class="temp-display">
-          <div class="current-temp">{{ currentTemp.toFixed(1) }}°C</div>
-          <div class="temp-arrow">↓</div>
-          <div class="target-temp">{{ sessionStore.currentSession?.targetTemp || 38 }}°C</div>
+        <!-- 哺乳瓶アニメーションと温度表示 -->
+        <div class="visual-section">
+          <BottleAnimation
+            v-if="sessionStore.currentSession"
+            :current-temp="currentTemp"
+            :target-temp="sessionStore.currentSession.targetTemp"
+            :volume="sessionStore.currentSession.totalVolume"
+          />
+          <div class="temp-display">
+            <div class="current-temp">{{ currentTemp.toFixed(1) }}°C</div>
+            <div class="temp-arrow">↓</div>
+            <div class="target-temp">{{ sessionStore.currentSession?.targetTemp || 38 }}°C</div>
+          </div>
         </div>
+
+        <!-- 温度グラフ -->
+        <TemperatureGraph
+          v-if="thermalResult && sessionStore.currentSession"
+          :initial-temp="thermalResult.initialMixTemp"
+          :current-temp="currentTemp"
+          :target-temp="sessionStore.currentSession.targetTemp"
+          :ambient-temp="thermalResult.ambientTemp"
+          :cooling-constant="thermalResult.coolingConstant"
+          :elapsed-seconds="elapsedSeconds"
+          :predicted-time="thermalResult.predictedTime"
+        />
 
         <!-- プログレスバー -->
         <div class="progress-container">
@@ -198,9 +218,17 @@ const handleCancel = () => {
   margin-bottom: 40px;
 }
 
+.visual-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  margin-bottom: 24px;
+}
+
 .temp-display {
   text-align: center;
-  margin-bottom: 40px;
+  flex: 1;
 }
 
 .current-temp {
@@ -229,6 +257,7 @@ const handleCancel = () => {
   border-radius: 8px;
   overflow: hidden;
   margin-bottom: 8px;
+  margin-top: 24px;
 }
 
 .progress-bar {
@@ -327,6 +356,11 @@ const handleCancel = () => {
 @media (max-width: 480px) {
   .container {
     padding: 30px 20px;
+  }
+
+  .visual-section {
+    flex-direction: column;
+    gap: 16px;
   }
 
   .current-temp {

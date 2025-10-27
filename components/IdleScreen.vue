@@ -4,11 +4,13 @@ import { useSettingsStore } from '~/stores/settings';
 import { useSessionStore } from '~/stores/session';
 import { useHistoryStore } from '~/stores/history';
 import { useThermalEngine } from '~/composables/useThermalEngine';
+import { useDarkMode } from '~/composables/useDarkMode';
 
 const settingsStore = useSettingsStore();
 const sessionStore = useSessionStore();
 const historyStore = useHistoryStore();
 const { getMaterial, getCoolingMethod, materials, coolingMethods } = useThermalEngine();
+const { colorMode, toggleColorMode } = useDarkMode();
 
 const showSettings = ref(false);
 const showHistory = ref(false);
@@ -70,7 +72,9 @@ const updateTargetTemp = (event: Event) => {
           <h1 class="title">🍼 みるくっく</h1>
           <p class="subtitle">科学的根拠に基づいた調乳タイマー</p>
         </div>
-        <div class="spacer"></div>
+        <button class="theme-toggle-button" @click="toggleColorMode" :title="`カラーモード: ${colorMode}`">
+          {{ colorMode === 'light' ? '☀️' : colorMode === 'dark' ? '🌙' : '🔄' }}
+        </button>
       </header>
 
       <!-- メインコンテンツ -->
@@ -231,6 +235,12 @@ const updateTargetTemp = (event: Event) => {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+:global(html.dark) .container {
+  background: #1e1e1e;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 }
 
 /* ヘッダー */
@@ -242,7 +252,8 @@ const updateTargetTemp = (event: Event) => {
   position: relative;
 }
 
-.history-icon-button {
+.history-icon-button,
+.theme-toggle-button {
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -257,14 +268,10 @@ const updateTargetTemp = (event: Event) => {
   flex-shrink: 0;
 }
 
-.history-icon-button:hover {
+.history-icon-button:hover,
+.theme-toggle-button:hover {
   transform: scale(1.1);
   box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
-}
-
-.spacer {
-  width: 40px;
-  flex-shrink: 0;
 }
 
 .title {
@@ -272,11 +279,21 @@ const updateTargetTemp = (event: Event) => {
   font-weight: bold;
   color: #333;
   margin-bottom: 8px;
+  transition: color 0.3s ease;
+}
+
+:global(html.dark) .title {
+  color: #e0e0e0;
 }
 
 .subtitle {
   font-size: 14px;
   color: #666;
+  transition: color 0.3s ease;
+}
+
+:global(html.dark) .subtitle {
+  color: #aaa;
 }
 
 /* メイン */

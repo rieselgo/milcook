@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useSessionStore } from '~/stores/session';
+import { useDarkMode } from '~/composables/useDarkMode';
 
 useHead({
   title: 'みるくっく - 科学的根拠に基づいた調乳タイマー',
@@ -12,6 +13,9 @@ useHead({
 
 const sessionStore = useSessionStore();
 const status = computed(() => sessionStore.status);
+
+// ダークモード初期化
+const { isDark } = useDarkMode();
 </script>
 
 <template>
@@ -48,6 +52,13 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: linear-gradient(135deg, #e3f2fd 0%, #ffffff 50%, #fce4ec 100%);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* ダークモード */
+html.dark body {
+  background: linear-gradient(135deg, #1a237e 0%, #263238 50%, #311b92 100%);
+  color: #e0e0e0;
 }
 
 .app {
