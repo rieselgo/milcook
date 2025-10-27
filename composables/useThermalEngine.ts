@@ -147,6 +147,38 @@ export const useThermalEngine = () => {
   };
 
   /**
+   * 混合温度を計算（ユーザー入力値から）
+   */
+  const calculateMixedTemp = (
+    hotWaterTemp: number,
+    hotWaterVolume: number,
+    coldWaterTemp: number,
+    coldWaterVolume: number
+  ): number => {
+    return calculateMixedTemperature(
+      hotWaterTemp,
+      hotWaterVolume,
+      coldWaterTemp,
+      coldWaterVolume
+    );
+  };
+
+  /**
+   * 冷却時間を計算（ユーザー入力値から）
+   */
+  const calculateCoolingTime = (
+    initialTemp: number,
+    targetTemp: number,
+    ambientTemp: number,
+    volume: number,
+    material: BottleMaterial,
+    method: CoolingMethod
+  ): number => {
+    const k = calculateCoolingConstant(volume, material, method);
+    return calculateTimeToTarget(initialTemp, targetTemp, ambientTemp, k);
+  };
+
+  /**
    * 冷却方法の比較
    *
    * 同じ条件で異なる冷却方法の所要時間を比較
@@ -179,6 +211,9 @@ export const useThermalEngine = () => {
     calculateCurrentTemp,
     calculateCurrentCoolingRate,
     calculateRemainingTime,
+    calculateMixedTemp,
+    calculateCoolingTime,
+    calculateCoolingConstant,
     compareCoolingMethods,
 
     // ユーティリティ

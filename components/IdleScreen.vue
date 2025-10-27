@@ -8,7 +8,7 @@ import { useThermalEngine } from '~/composables/useThermalEngine';
 const settingsStore = useSettingsStore();
 const sessionStore = useSessionStore();
 const historyStore = useHistoryStore();
-const { getMaterial, getCoolingMethod, calculateMilkPreparation } = useThermalEngine();
+const { getMaterial, getCoolingMethod } = useThermalEngine();
 
 const showSettings = ref(false);
 const volume = ref(settingsStore.settings.defaultVolume);
@@ -28,23 +28,13 @@ const todayVolume = computed(() => {
 });
 
 const handleStart = () => {
-  // 熱計算を実行
-  const result = calculateMilkPreparation({
-    volume: volume.value,
-    materialId: settingsStore.settings.defaultMaterialId,
-    coolingMethodId: settingsStore.settings.defaultCoolingMethodId,
-    targetTemp: settingsStore.settings.defaultTargetTemp,
-    coldWaterTemp: settingsStore.settings.defaultColdWaterTemp,
-    targetMixTemp: settingsStore.settings.defaultTargetMixTemp,
-  });
-
-  // セッションを開始
+  // セッションを開始（熱計算はMixingScreenでユーザー入力から行う）
   sessionStore.startSession(
     volume.value,
     settingsStore.settings.defaultMaterialId,
     settingsStore.settings.defaultCoolingMethodId,
-    settingsStore.settings.defaultTargetTemp,
-    result
+    settingsStore.settings.defaultTargetTemp
+    // resultは渡さない - MixingScreenでユーザー入力から計算
   );
 };
 

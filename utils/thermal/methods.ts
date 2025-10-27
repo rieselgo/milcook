@@ -13,49 +13,39 @@ export const COOLING_METHODS: Record<string, CoolingMethod> = {
     description: '速くて節水、実用的',
     ambientTemp: 2, // °C (氷水の温度)
     velocity: 0.3, // m/s (攪拌による流速)
-    baseH: 1500, // W/(m²·K) 基準熱伝達係数 (調整済み)
-    velocityFactor: 1.5, // 流速による補正係数
+    baseH: 104, // W/(m²·K) 基準熱伝達係数 (62°C→38°Cを約3分で冷却)
+    velocityFactor: 1.5,
     recommendedPriority: 1, // 最推奨
   },
   ice_still: {
     id: 'ice_still',
     name: '氷水静置',
     description: '放置できて楽',
-    ambientTemp: 2, // °C
+    ambientTemp: 2, // °C (氷水の温度)
     velocity: 0, // m/s (静止)
-    baseH: 300, // W/(m²·K) 自然対流のみ (調整済み)
+    baseH: 63, // W/(m²·K) 自然対流のみ (62°C→38°Cを約10分で冷却)
     velocityFactor: 1.0,
     recommendedPriority: 2,
   },
-  running_water: {
-    id: 'running_water',
-    name: '流水冷却',
-    description: '速いが水道代',
+  water_still: {
+    id: 'water_still',
+    name: '水道水静置',
+    description: '氷なしで冷やす',
     ambientTemp: 15, // °C (水道水の温度)
-    velocity: 0.5, // m/s (流水)
-    baseH: 2000, // W/(m²·K) (調整済み)
-    velocityFactor: 2.0,
+    velocity: 0, // m/s (静止)
+    baseH: 58, // W/(m²·K) (62°C→38°Cを約15分で冷却)
+    velocityFactor: 1.0,
     recommendedPriority: 3,
-  },
-  ice_water_running: {
-    id: 'ice_water_running',
-    name: '氷水+流水',
-    description: '最速',
-    ambientTemp: 5, // °C
-    velocity: 0.7, // m/s
-    baseH: 2500, // W/(m²·K) (調整済み)
-    velocityFactor: 2.5,
-    recommendedPriority: 4,
   },
   air: {
     id: 'air',
     name: '常温放置',
     description: '遅すぎる（非推奨）',
     ambientTemp: 20, // °C (室温)
-    velocity: 0, // m/s
-    baseH: 10, // W/(m²·K) 自然対流（空気）
+    velocity: 0, // m/s (静止)
+    baseH: 17, // W/(m²·K) 自然対流（空気）(62°C→38°Cを約60分で冷却)
     velocityFactor: 1.0,
-    recommendedPriority: 5, // 非推奨
+    recommendedPriority: 4,
   },
 };
 

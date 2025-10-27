@@ -22,7 +22,7 @@ const status = computed(() => sessionStore.status);
       <PreparingScreen v-else-if="status === 'preparing'" />
       <MixingScreen v-else-if="status === 'mixing'" />
       <CoolingScreen v-else-if="status === 'cooling'" />
-      <CompletedScreen v-else-if="status === 'completed'" />
+      <CompletedScreen v-else-if="status === 'ready' || status === 'completed'" />
     </Transition>
   </div>
 </template>

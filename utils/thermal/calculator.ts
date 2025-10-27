@@ -61,7 +61,8 @@ export const calculateCoolingConstant = (
   method: CoolingMethod
 ): number => {
   // 質量計算 (kg)
-  const mass = (volume / 1000) * WATER_DENSITY;
+  // 水の密度は1g/ml = 1kg/Lなので、volume(ml) / 1000 = 質量(kg)
+  const mass = volume / 1000;
 
   // 表面積計算 (m²)
   const area = calculateBottleSurfaceArea(volume);

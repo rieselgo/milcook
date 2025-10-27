@@ -37,7 +37,7 @@ export const useSessionStore = defineStore('session', () => {
     materialId: string,
     coolingMethodId: string,
     targetTemp: number,
-    result: ThermalCalculationResult
+    result?: ThermalCalculationResult
   ): void => {
     currentSession.value = {
       id: Date.now().toString(),
@@ -47,15 +47,15 @@ export const useSessionStore = defineStore('session', () => {
       materialId,
       coolingMethodId,
       targetTemp,
-      initialTemp: result.initialMixTemp,
+      initialTemp: result?.initialMixTemp || 0,
       finalTemp: null,
-      predictedTime: result.predictedCoolingTime,
+      predictedTime: result?.predictedCoolingTime || 0,
       actualTime: null,
-      hotWaterVolume: result.hotWaterVolume,
-      coldWaterVolume: result.coldWaterVolume,
+      hotWaterVolume: result?.hotWaterVolume || 0,
+      coldWaterVolume: result?.coldWaterVolume || 0,
     };
 
-    thermalResult.value = result;
+    thermalResult.value = result || null;
     status.value = 'preparing';
     coolingStartTime.value = null;
     elapsedSeconds.value = 0;
@@ -67,6 +67,30 @@ export const useSessionStore = defineStore('session', () => {
   const startMixing = (): void => {
     if (!currentSession.value) return;
     status.value = 'mixing';
+  };
+
+  /**
+   * 熱計算結果を更新（ユーザー入力値から再計算時）
+   */
+  const updateThermalResult = (result: Partial<ThermalCalculationResult>): void => {
+    // thermalResultがnullの場合は新規作成
+    if (!thermalResult.value) {
+      thermalResult.value = result as ThermalCalculationResult;
+    } else {
+      // 既存の結果を更新
+      thermalResult.value = {
+        ...thermalResult.value,
+        ...result,
+      };
+    }
+
+    // セッションデータも更新
+    if (currentSession.value) {
+      currentSession.value.initialTemp = result.initialMixTemp || currentSession.value.initialTemp;
+      currentSession.value.hotWaterVolume = result.hotWaterVolume || currentSession.value.hotWaterVolume;
+      currentSession.value.coldWaterVolume = result.coldWaterVolume || currentSession.value.coldWaterVolume;
+      currentSession.value.predictedTime = result.estimatedTime || result.predictedCoolingTime || currentSession.value.predictedTime;
+    }
   };
 
   /**
@@ -154,6 +178,7 @@ export const useSessionStore = defineStore('session', () => {
     // アクション
     startSession,
     startMixing,
+    updateThermalResult,
     startCooling,
     updateElapsedTime,
     reachTarget,
