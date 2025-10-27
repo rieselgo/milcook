@@ -8,7 +8,7 @@ import { useThermalEngine } from '~/composables/useThermalEngine';
 const settingsStore = useSettingsStore();
 const sessionStore = useSessionStore();
 const historyStore = useHistoryStore();
-const { getMaterial, getCoolingMethod } = useThermalEngine();
+const { getMaterial, getCoolingMethod, materials, coolingMethods } = useThermalEngine();
 
 const showSettings = ref(false);
 const volume = ref(settingsStore.settings.defaultVolume);
@@ -40,6 +40,20 @@ const handleStart = () => {
 
 const updateVolume = (event: Event) => {
   volume.value = parseInt((event.target as HTMLInputElement).value);
+};
+
+// 設定変更ハンドラ
+const updateMaterial = (materialId: string) => {
+  settingsStore.updateSettings({ defaultMaterialId: materialId });
+};
+
+const updateMethod = (methodId: string) => {
+  settingsStore.updateSettings({ defaultCoolingMethodId: methodId });
+};
+
+const updateTargetTemp = (event: Event) => {
+  const temp = parseInt((event.target as HTMLInputElement).value);
+  settingsStore.updateSettings({ defaultTargetTemp: temp });
 };
 </script>
 
@@ -98,7 +112,63 @@ const updateVolume = (event: Event) => {
         <!-- 詳細設定パネル(折りたたみ) -->
         <Transition name="slide">
           <div v-if="showSettings" class="settings-panel">
-            <p class="settings-info">詳細な設定変更機能は後のフェーズで実装予定</p>
+            <!-- 哺乳瓶の材質 -->
+            <div class="setting-group">
+              <h4 class="setting-group-title">🍼 哺乳瓶の材質</h4>
+              <div class="setting-options">
+                <button
+                  v-for="material in materials"
+                  :key="material.id"
+                  class="option-button"
+                  :class="{ active: settingsStore.settings.defaultMaterialId === material.id }"
+                  @click="updateMaterial(material.id)"
+                >
+                  <div class="option-name">{{ material.name }}</div>
+                  <div class="option-desc">{{ material.description }}</div>
+                </button>
+              </div>
+            </div>
+
+            <!-- 冷却方法 -->
+            <div class="setting-group">
+              <h4 class="setting-group-title">❄️ 冷却方法</h4>
+              <div class="setting-options">
+                <button
+                  v-for="method in coolingMethods"
+                  :key="method.id"
+                  class="option-button"
+                  :class="{ active: settingsStore.settings.defaultCoolingMethodId === method.id }"
+                  @click="updateMethod(method.id)"
+                >
+                  <div class="option-name">
+                    {{ method.name }}
+                    <span v-if="method.id === 'ice_stir'" class="recommend-badge">推奨</span>
+                  </div>
+                  <div class="option-desc">{{ method.description }}</div>
+                </button>
+              </div>
+            </div>
+
+            <!-- 目標温度 -->
+            <div class="setting-group">
+              <h4 class="setting-group-title">🌡️ 目標温度</h4>
+              <div class="temp-setting">
+                <input
+                  type="range"
+                  min="35"
+                  max="42"
+                  step="1"
+                  :value="settingsStore.settings.defaultTargetTemp"
+                  @input="updateTargetTemp"
+                  class="temp-slider"
+                />
+                <div class="temp-display">{{ settingsStore.settings.defaultTargetTemp }}°C</div>
+                <div class="temp-labels">
+                  <span>35°C</span>
+                  <span>42°C</span>
+                </div>
+              </div>
+            </div>
           </div>
         </Transition>
 
@@ -295,14 +365,128 @@ const updateVolume = (event: Event) => {
 /* 詳細設定パネル */
 .settings-panel {
   background: #f9f9f9;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.setting-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.setting-group-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.setting-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.option-button {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: left;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.option-button:hover {
+  border-color: #2196f3;
+  background: #f5f9ff;
+}
+
+.option-button.active {
+  border-color: #2196f3;
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+}
+
+.option-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.recommend-badge {
+  background: linear-gradient(135deg, #ff9800, #ff5722);
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.option-desc {
+  font-size: 12px;
+  color: #666;
+}
+
+.temp-setting {
+  background: white;
   border-radius: 8px;
   padding: 16px;
 }
 
-.settings-info {
-  font-size: 12px;
-  color: #999;
+.temp-slider {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #ddd;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+
+.temp-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ff5722;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(255, 87, 34, 0.4);
+}
+
+.temp-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ff5722;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 8px rgba(255, 87, 34, 0.4);
+}
+
+.temp-display {
   text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: #ff5722;
+  margin-bottom: 8px;
+}
+
+.temp-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #999;
 }
 
 .slide-enter-active,
