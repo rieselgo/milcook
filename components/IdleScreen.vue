@@ -11,6 +11,7 @@ const historyStore = useHistoryStore();
 const { getMaterial, getCoolingMethod, materials, coolingMethods } = useThermalEngine();
 
 const showSettings = ref(false);
+const showHistory = ref(false);
 const volume = ref(settingsStore.settings.defaultVolume);
 
 const materialName = computed(() => {
@@ -62,8 +63,14 @@ const updateTargetTemp = (event: Event) => {
     <div class="container">
       <!-- ヘッダー -->
       <header class="header">
-        <h1 class="title">🍼 みるくっく</h1>
-        <p class="subtitle">科学的根拠に基づいた調乳タイマー</p>
+        <button class="history-icon-button" @click="showHistory = true">
+          📊
+        </button>
+        <div>
+          <h1 class="title">🍼 みるくっく</h1>
+          <p class="subtitle">科学的根拠に基づいた調乳タイマー</p>
+        </div>
+        <div class="spacer"></div>
       </header>
 
       <!-- メインコンテンツ -->
@@ -199,6 +206,9 @@ const updateTargetTemp = (event: Event) => {
         </div>
       </footer>
     </div>
+
+    <!-- 履歴モーダル -->
+    <HistoryModal :show="showHistory" @close="showHistory = false" />
   </div>
 </template>
 
@@ -226,6 +236,35 @@ const updateTargetTemp = (event: Event) => {
 /* ヘッダー */
 .header {
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.history-icon-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.history-icon-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.spacer {
+  width: 40px;
+  flex-shrink: 0;
 }
 
 .title {
