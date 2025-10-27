@@ -4,7 +4,7 @@ import { useSessionStore } from '~/stores/session';
 import { useThermalEngine } from '~/composables/useThermalEngine';
 
 const sessionStore = useSessionStore();
-const { calculateCurrentTemp, calculateRemainingTime } = useThermalEngine();
+const { calculateCurrentTemp, calculateRemainingTime, calculateCurrentCoolingRate } = useThermalEngine();
 
 const thermalResult = computed(() => sessionStore.thermalResult);
 const coolingStartTime = computed(() => sessionStore.coolingStartTime);
@@ -57,6 +57,19 @@ const progress = computed(() => {
   const currentDiff = initialTemp - current;
 
   return Math.min(100, Math.max(0, (currentDiff / totalDiff) * 100));
+});
+
+// 冷却速度を計算
+const coolingRate = computed(() => {
+  if (!thermalResult.value) {
+    return 0;
+  }
+
+  return calculateCurrentCoolingRate(
+    currentTemp.value,
+    thermalResult.value.ambientTemp,
+    thermalResult.value.coolingConstant
+  );
 });
 
 // 残り時間の表示
@@ -121,10 +134,16 @@ const handleCancel = () => {
         </div>
         <div class="progress-label">{{ Math.round(progress) }}%</div>
 
-        <!-- 残り時間 -->
-        <div class="remaining-time">
-          <div class="remaining-label">残り時間</div>
-          <div class="remaining-value">{{ remainingTimeDisplay }}</div>
+        <!-- 残り時間と冷却速度 -->
+        <div class="info-grid">
+          <div class="info-box">
+            <div class="info-label">残り時間</div>
+            <div class="info-value">{{ remainingTimeDisplay }}</div>
+          </div>
+          <div class="info-box">
+            <div class="info-label">冷却速度</div>
+            <div class="info-value">{{ Math.abs(coolingRate).toFixed(1) }}<span class="unit">°C/分</span></div>
+          </div>
         </div>
 
         <!-- ヒント -->
@@ -226,21 +245,36 @@ const handleCancel = () => {
   margin-bottom: 32px;
 }
 
-.remaining-time {
-  text-align: center;
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
   margin-bottom: 32px;
 }
 
-.remaining-label {
-  font-size: 14px;
+.info-box {
+  background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+.info-label {
+  font-size: 12px;
   color: #666;
   margin-bottom: 8px;
 }
 
-.remaining-value {
-  font-size: 36px;
+.info-value {
+  font-size: 28px;
   font-weight: bold;
   color: #f57c00;
+}
+
+.info-value .unit {
+  font-size: 14px;
+  font-weight: normal;
+  margin-left: 2px;
 }
 
 .hint-box {
