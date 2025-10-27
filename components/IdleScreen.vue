@@ -646,7 +646,7 @@ const updateTargetTemp = (event: Event) => {
 }
 
 .hint-desc {
-  font-size: 11px;
+  font-size: 12px;
   color: #666;
 }
 

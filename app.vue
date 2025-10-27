@@ -5,9 +5,12 @@ import { useDarkMode } from '~/composables/useDarkMode';
 
 useHead({
   title: 'みるくっく - 科学的根拠に基づいた調乳タイマー',
+  htmlAttrs: {
+    lang: 'ja',
+  },
   meta: [
     { name: 'description', content: 'ニュートンの冷却法則に基づいた正確な調乳タイマーアプリ' },
-    { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' },
+    { name: 'viewport', content: 'width=device-width, initial-scale=1' },
     { name: 'theme-color', content: '#FF6B35' },
     { name: 'apple-mobile-web-app-capable', content: 'yes' },
     { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
