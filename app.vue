@@ -28,6 +28,9 @@ const { isDark } = useDarkMode();
       <CoolingScreen v-else-if="status === 'cooling'" />
       <CompletedScreen v-else-if="status === 'ready' || status === 'completed'" />
     </Transition>
+
+    <!-- PWAインストールプロンプト -->
+    <PWAInstallPrompt />
   </div>
 </template>
 

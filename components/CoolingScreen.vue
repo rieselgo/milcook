@@ -2,9 +2,11 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useSessionStore } from '~/stores/session';
 import { useThermalEngine } from '~/composables/useThermalEngine';
+import { useNotification } from '~/composables/useNotification';
 
 const sessionStore = useSessionStore();
 const { calculateCurrentTemp, calculateRemainingTime, calculateCurrentCoolingRate } = useThermalEngine();
+const { notifyTargetReached } = useNotification();
 
 const thermalResult = computed(() => sessionStore.thermalResult);
 const coolingStartTime = computed(() => sessionStore.coolingStartTime);
@@ -90,6 +92,8 @@ onMounted(() => {
 
     // 目標温度到達チェック
     if (sessionStore.currentSession && currentTemp.value <= sessionStore.currentSession.targetTemp) {
+      // 通知を送る
+      notifyTargetReached();
       sessionStore.reachTarget();
       if (intervalId) {
         clearInterval(intervalId);

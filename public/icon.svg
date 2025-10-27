@@ -1,0 +1,35 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <rect width="512" height="512" fill="#FF6B35" rx="64"/>
+
+  <!-- 哺乳瓶のシルエット -->
+  <g transform="translate(256, 256)">
+    <!-- 乳首 -->
+    <ellipse cx="0" cy="-160" rx="40" ry="20" fill="#FFE5E5"/>
+    <rect x="-20" y="-165" width="40" height="15" fill="#FFE5E5"/>
+
+    <!-- ボトル本体 -->
+    <path d="M -60 -140 L -60 80 Q -60 140, 0 140 Q 60 140, 60 80 L 60 -140 Q 60 -150, 50 -150 L -50 -150 Q -60 -150, -60 -140 Z"
+          fill="rgba(255, 255, 255, 0.9)"
+          stroke="#FFF"
+          stroke-width="4"/>
+
+    <!-- 液体（ミルク） -->
+    <path d="M -55 -20 L -55 80 Q -55 130, 0 130 Q 55 130, 55 80 L 55 -20 Z"
+          fill="#FFF066"
+          opacity="0.8"/>
+
+    <!-- 目盛り -->
+    <line x1="-70" y1="-40" x2="-60" y2="-40" stroke="#FFF" stroke-width="3"/>
+    <line x1="-70" y1="0" x2="-60" y2="0" stroke="#FFF" stroke-width="3"/>
+    <line x1="-70" y1="40" x2="-60" y2="40" stroke="#FFF" stroke-width="3"/>
+    <line x1="-70" y1="80" x2="-60" y2="80" stroke="#FFF" stroke-width="3"/>
+
+    <!-- 温度計アイコン -->
+    <g transform="translate(80, 0)">
+      <rect x="-8" y="-40" width="16" height="60" fill="#FFF" rx="8"/>
+      <circle cx="0" cy="30" r="12" fill="#4CAF50"/>
+      <rect x="-3" y="-30" width="6" height="50" fill="#4CAF50"/>
+    </g>
+  </g>
+</svg>

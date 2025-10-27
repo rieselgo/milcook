@@ -11,7 +11,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@vueuse/nuxt',
     // '@nuxtjs/tailwindcss', // 一旦コメントアウト
-    // '@vite-pwa/nuxt', // 一旦コメントアウト
+    '@vite-pwa/nuxt',
   ],
 
   app: {
@@ -39,6 +39,53 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       // 将来のFirebase設定用（現在は不要）
+    },
+  },
+
+  pwa: {
+    registerType: 'autoUpdate',
+    manifest: {
+      name: 'みるくっく - 粉ミルク調乳タイマー',
+      short_name: 'みるくっく',
+      description: '科学的根拠に基づいた正確な調乳タイマーアプリ',
+      theme_color: '#FF6B35',
+      background_color: '#FFFFFF',
+      display: 'standalone',
+      orientation: 'portrait',
+      scope: '/',
+      start_url: '/',
+      icons: [
+        {
+          src: '/icon.svg',
+          sizes: '512x512',
+          type: 'image/svg+xml',
+          purpose: 'any maskable',
+        },
+      ],
+    },
+    workbox: {
+      navigateFallback: '/',
+      globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+      runtimeCaching: [
+        {
+          urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'google-fonts-cache',
+            expiration: {
+              maxEntries: 10,
+              maxAgeSeconds: 60 * 60 * 24 * 365, // 1年
+            },
+            cacheableResponse: {
+              statuses: [0, 200],
+            },
+          },
+        },
+      ],
+    },
+    devOptions: {
+      enabled: true,
+      type: 'module',
     },
   },
 })
