@@ -52,7 +52,7 @@ const predictedTime = computed(() => {
   const method = getCoolingMethod(sessionStore.currentSession.coolingMethodId);
   const targetTemp = sessionStore.currentSession.targetTemp;
 
-  return calculateCoolingTime(
+  const time = calculateCoolingTime(
     mixedTemp.value,
     targetTemp,
     method.ambientTemp,
@@ -60,6 +60,21 @@ const predictedTime = computed(() => {
     material,
     method
   );
+
+  // デバッグログ
+  console.log('🔍 冷却時間計算:', {
+    method: method.name,
+    baseH: method.baseH,
+    mixedTemp: mixedTemp.value.toFixed(1),
+    targetTemp,
+    ambientTemp: method.ambientTemp,
+    totalVolume: totalVolume.value,
+    material: material.name,
+    thermalConductivity: material.thermalConductivity,
+    predictedTime: time.toFixed(1) + '分'
+  });
+
+  return time;
 });
 
 const handleStartCooling = () => {

@@ -13,6 +13,7 @@ const coolingStartTime = computed(() => sessionStore.coolingStartTime);
 const elapsedSeconds = computed(() => sessionStore.elapsedSeconds);
 
 let intervalId: number | null = null;
+const isPaused = ref(false);
 
 // 現在温度を計算
 const currentTemp = computed(() => {
@@ -88,6 +89,11 @@ const remainingTimeDisplay = computed(() => {
 // タイマー開始
 onMounted(() => {
   intervalId = window.setInterval(() => {
+    // 一時停止中はタイマー更新しない
+    if (isPaused.value) {
+      return;
+    }
+
     sessionStore.updateElapsedTime(sessionStore.elapsedSeconds + 1);
 
     // 目標温度到達チェック
@@ -109,7 +115,17 @@ onUnmounted(() => {
   }
 });
 
-const handleCancel = () => {
+const handlePauseResume = () => {
+  if (isPaused.value) {
+    // 再開
+    isPaused.value = false;
+  } else {
+    // 一時停止
+    isPaused.value = true;
+  }
+};
+
+const handleStop = () => {
   if (intervalId) {
     clearInterval(intervalId);
   }
@@ -181,9 +197,14 @@ const handleCancel = () => {
       </main>
 
       <footer class="footer">
-        <button class="cancel-button" @click="handleCancel">
-          キャンセル
-        </button>
+        <div class="button-group">
+          <button class="pause-button" @click="handlePauseResume">
+            {{ isPaused ? '▶️ 再開' : '⏸️ 一時停止' }}
+          </button>
+          <button class="stop-button" @click="handleStop">
+            ⏹️ 終了
+          </button>
+        </div>
       </footer>
     </div>
   </div>
@@ -343,17 +364,40 @@ const handleCancel = () => {
 .footer {
 }
 
-.cancel-button {
-  width: 100%;
-  background: white;
-  border: 2px solid #e0e0e0;
-  color: #666;
+.button-group {
+  display: flex;
+  gap: 12px;
+}
+
+.pause-button,
+.stop-button {
+  flex: 1;
   padding: 14px;
   border-radius: 12px;
   font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
 }
 
-.cancel-button:hover {
+.pause-button {
+  background: linear-gradient(135deg, #2196f3, #00bcd4);
+  color: white;
+}
+
+.pause-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.stop-button {
+  background: white;
+  border: 2px solid #e0e0e0;
+  color: #666;
+}
+
+.stop-button:hover {
   background: #f5f5f5;
 }
 
