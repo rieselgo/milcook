@@ -36,6 +36,16 @@ export default defineNuxtConfig({
     typeCheck: false, // 一旦オフ（vue-tsc未インストールのため）
   },
 
+  // パフォーマンス最適化
+  experimental: {
+    payloadExtraction: true, // ペイロードの抽出でハイドレーション高速化
+    renderJsonPayloads: true, // JSONペイロードのレンダリング
+  },
+
+  nitro: {
+    compressPublicAssets: true, // 静的アセットの圧縮
+  },
+
   runtimeConfig: {
     public: {
       // 将来のFirebase設定用（現在は不要）
