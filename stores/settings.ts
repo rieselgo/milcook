@@ -24,7 +24,7 @@ const DEFAULT_SETTINGS: UserSettings = {
   // デフォルト値
   defaultVolume: 140,
   defaultMaterialId: 'glass',
-  defaultCoolingMethodId: 'ice_stir',
+  defaultCoolingMethodId: 'ice_still',
   defaultTargetTemp: 38,
   defaultColdWaterTemp: 20,
   defaultTargetMixTemp: 70,
