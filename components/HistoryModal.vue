@@ -159,7 +159,7 @@ const formatTime = (minutes: number | null) => {
   background: #f5f5f5;
   border: none;
   font-size: 24px;
-  color: #666;
+  color: #555 /* コントラスト比改善 */;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -188,7 +188,7 @@ const formatTime = (minutes: number | null) => {
 
 .stat-label {
   font-size: 11px;
-  color: #666;
+  color: #555 /* コントラスト比改善 */;
   margin-bottom: 4px;
 }
 
@@ -233,7 +233,7 @@ const formatTime = (minutes: number | null) => {
 
 .item-date {
   font-size: 13px;
-  color: #666;
+  color: #555 /* コントラスト比改善 */;
 }
 
 .item-volume {
@@ -255,7 +255,7 @@ const formatTime = (minutes: number | null) => {
   border-radius: 4px;
   padding: 2px 8px;
   font-size: 11px;
-  color: #666;
+  color: #555 /* コントラスト比改善 */;
 }
 
 .item-times {

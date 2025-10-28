@@ -303,7 +303,7 @@ const handleStop = () => {
 .progress-label {
   text-align: center;
   font-size: 14px;
-  color: #666;
+  color: #555 /* コントラスト比改善 */;
   margin-bottom: 32px;
 }
 
@@ -323,7 +323,7 @@ const handleStop = () => {
 
 .info-label {
   font-size: 12px;
-  color: #666;
+  color: #555 /* コントラスト比改善 */;
   margin-bottom: 8px;
 }
 
@@ -366,7 +366,7 @@ const handleStop = () => {
 
 .hint-desc {
   font-size: 13px;
-  color: #666;
+  color: #555; /* コントラスト比改善: 白背景でWCAG AA準拠 */
 }
 
 .footer {
@@ -402,7 +402,7 @@ const handleStop = () => {
 .stop-button {
   background: white;
   border: 2px solid #e0e0e0;
-  color: #666;
+  color: #555 /* コントラスト比改善 */;
 }
 
 .stop-button:hover {

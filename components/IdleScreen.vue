@@ -311,7 +311,7 @@ const updateTargetTemp = (event: Event) => {
 
 .subtitle {
   font-size: 14px;
-  color: #666;
+  color: #555 /* コントラスト比改善 */;
   transition: color 0.3s ease;
 }
 
@@ -396,7 +396,7 @@ const updateTargetTemp = (event: Event) => {
 
 .setting-label {
   font-size: 14px;
-  color: #666;
+  color: #555 /* コントラスト比改善 */;
 }
 
 .setting-value {
@@ -427,7 +427,7 @@ const updateTargetTemp = (event: Event) => {
   width: 100%;
   background: white;
   border: 2px solid #e0e0e0;
-  color: #666;
+  color: #555 /* コントラスト比改善 */;
   padding: 12px;
   border-radius: 8px;
   font-size: 14px;
@@ -511,7 +511,7 @@ const updateTargetTemp = (event: Event) => {
 
 .option-desc {
   font-size: 12px;
-  color: #666;
+  color: #555 /* コントラスト比改善 */;
 }
 
 .temp-setting {
@@ -611,7 +611,7 @@ const updateTargetTemp = (event: Event) => {
 
 .stat-label {
   font-size: 12px;
-  color: #666;
+  color: #555 /* コントラスト比改善 */;
   margin-top: 4px;
 }
 
@@ -647,7 +647,7 @@ const updateTargetTemp = (event: Event) => {
 
 .hint-desc {
   font-size: 12px;
-  color: #666;
+  color: #555; /* コントラスト比改善: 白背景でWCAG AA準拠 */
 }
 
 /* レスポンシブ */

@@ -16,10 +16,13 @@ export default defineNuxtConfig({
 
   app: {
     head: {
+      htmlAttrs: {
+        lang: 'ja',
+      },
       title: '粉ミルク調乳タイマー',
       meta: [
         { charset: 'utf-8' },
-        { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=5' },
         { name: 'description', content: '科学的根拠に基づいた正確な調乳タイマー' },
         { name: 'theme-color', content: '#FF6B35' },
       ],

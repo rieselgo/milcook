@@ -279,7 +279,7 @@ const handleCancel = () => {
 
 .subtitle {
   font-size: 14px;
-  color: #666;
+  color: #555 /* コントラスト比改善 */;
 }
 
 .main {
@@ -320,7 +320,7 @@ const handleCancel = () => {
 
 .input-label {
   font-size: 13px;
-  color: #666;
+  color: #555 /* コントラスト比改善 */;
   font-weight: 500;
 }
 
@@ -419,7 +419,7 @@ const handleCancel = () => {
 
 .result-label {
   font-size: 12px;
-  color: #666;
+  color: #555 /* コントラスト比改善 */;
   margin-bottom: 4px;
 }
 
@@ -467,7 +467,7 @@ const handleCancel = () => {
   width: 100%;
   background: white;
   border: 2px solid #e0e0e0;
-  color: #666;
+  color: #555 /* コントラスト比改善 */;
   padding: 14px;
   border-radius: 12px;
   font-size: 16px;

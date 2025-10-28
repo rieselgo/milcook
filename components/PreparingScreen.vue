@@ -102,7 +102,7 @@ const handleCancel = () => {
 
 .subtitle {
   font-size: 14px;
-  color: #666;
+  color: #555 /* コントラスト比改善 */;
 }
 
 .main {
@@ -142,7 +142,7 @@ const handleCancel = () => {
 
 .check-desc {
   font-size: 13px;
-  color: #666;
+  color: #555 /* コントラスト比改善 */;
 }
 
 .footer {
@@ -171,7 +171,7 @@ const handleCancel = () => {
   width: 100%;
   background: white;
   border: 2px solid #e0e0e0;
-  color: #666;
+  color: #555 /* コントラスト比改善 */;
   padding: 14px;
   border-radius: 12px;
   font-size: 16px;
