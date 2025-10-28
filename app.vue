@@ -4,12 +4,12 @@ import { useSessionStore } from '~/stores/session';
 import { useDarkMode } from '~/composables/useDarkMode';
 
 useHead({
-  title: 'みるくっく - 科学的根拠に基づいた調乳タイマー',
+  title: 'みるくっく - 調乳タイマー',
   htmlAttrs: {
     lang: 'ja',
   },
   meta: [
-    { name: 'description', content: 'ニュートンの冷却法則に基づいた正確な調乳タイマーアプリ' },
+    { name: 'description', content: '赤ちゃんのミルク作りをサポートする調乳タイマーアプリ' },
     { name: 'viewport', content: 'width=device-width, initial-scale=1' },
     { name: 'theme-color', content: '#FF6B35' },
     { name: 'apple-mobile-web-app-capable', content: 'yes' },

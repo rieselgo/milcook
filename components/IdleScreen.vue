@@ -70,18 +70,40 @@ const updateTargetTemp = (event: Event) => {
           @click="showHistory = true"
           aria-label="履歴を表示"
         >
-          📊
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+          </svg>
         </button>
-        <div>
-          <h1 class="title">🍼 みるくっく</h1>
-          <p class="subtitle">科学的根拠に基づいた調乳タイマー</p>
+        <div class="title-section">
+          <div class="bottle-icon">
+            <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="milkGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" style="stop-color:#FFB6C1;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#FF9AA2;stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <rect x="20" y="16" width="24" height="40" rx="4" fill="none" stroke="url(#milkGradient)" stroke-width="3" stroke-linecap="round"/>
+              <path d="M 26 16 L 26 10 Q 32 8 38 10 L 38 16" fill="none" stroke="url(#milkGradient)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              <line x1="22" y1="35" x2="42" y2="35" stroke="url(#milkGradient)" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+              <line x1="44" y1="25" x2="47" y2="25" stroke="#FFB6C1" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
+              <line x1="44" y1="35" x2="47" y2="35" stroke="#FFB6C1" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
+              <line x1="44" y1="45" x2="47" y2="45" stroke="#FFB6C1" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
+            </svg>
+          </div>
+          <h1 class="title">みるくっく</h1>
         </div>
         <button
           class="theme-toggle-button"
           @click="toggleColorMode"
           :aria-label="`カラーモード: ${colorMode === 'light' ? 'ライト' : colorMode === 'dark' ? 'ダーク' : '自動'}`"
         >
-          {{ colorMode === 'light' ? '☀️' : colorMode === 'dark' ? '🌙' : '🔄' }}
+          <svg v-if="colorMode === 'dark'" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>
+          </svg>
+          <svg v-else viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>
+          </svg>
         </button>
       </header>
 
@@ -121,7 +143,7 @@ const updateTargetTemp = (event: Event) => {
 
         <!-- 開始ボタン -->
         <button class="start-button" @click="handleStart" aria-label="ミルク作りを開始する">
-          開始する
+          はじめる
         </button>
 
         <!-- 詳細設定トグル -->
@@ -172,7 +194,7 @@ const updateTargetTemp = (event: Event) => {
                 >
                   <div class="option-name">
                     {{ method.name }}
-                    <span v-if="method.id === 'ice_stir'" class="recommend-badge">推奨</span>
+                    <span v-if="method.id === 'ice_still'" class="recommend-badge">おすすめ</span>
                   </div>
                   <div class="option-desc">{{ method.description }}</div>
                 </button>
@@ -240,20 +262,23 @@ const updateTargetTemp = (event: Event) => {
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
 .idle-screen {
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
+  font-family: 'Zen Maru Gothic', 'M PLUS Rounded 1c', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .container {
   max-width: 500px;
   width: 100%;
   background: white;
-  border-radius: 24px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border-radius: 32px;
+  box-shadow: 0 12px 48px rgba(255, 182, 193, 0.3);
   padding: 40px 30px;
   display: flex;
   flex-direction: column;
@@ -277,46 +302,68 @@ const updateTargetTemp = (event: Event) => {
 
 .history-icon-button,
 .theme-toggle-button {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.9);
   border: none;
-  font-size: 20px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  transition: all 0.3s;
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(255, 182, 193, 0.2);
 }
 
 .history-icon-button:hover,
 .theme-toggle-button:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 182, 193, 0.3);
+}
+
+.history-icon-button svg,
+.theme-toggle-button svg {
+  width: 24px;
+  height: 24px;
+  fill: #FFB6C1;
+}
+
+.title-section {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.bottle-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bottle-icon svg {
+  width: 48px;
+  height: 48px;
+  animation: gentle-bounce 2s ease-in-out infinite;
+}
+
+@keyframes gentle-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
 }
 
 .title {
-  font-size: 32px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 8px;
+  font-size: 36px;
+  font-weight: 700;
+  color: #FF8FA3;
+  letter-spacing: 2px;
   transition: color 0.3s ease;
 }
 
 :global(html.dark) .title {
-  color: #e0e0e0;
-}
-
-.subtitle {
-  font-size: 14px;
-  color: #555 /* コントラスト比改善 */;
-  transition: color 0.3s ease;
-}
-
-:global(html.dark) .subtitle {
-  color: #aaa;
+  color: #FFB6C1;
 }
 
 /* メイン */
@@ -332,10 +379,11 @@ const updateTargetTemp = (event: Event) => {
 }
 
 .volume-display {
-  font-size: 48px;
-  font-weight: bold;
-  color: #2196f3;
+  font-size: 56px;
+  font-weight: 700;
+  color: #FFB6C1;
   margin-bottom: 16px;
+  text-shadow: 0 2px 8px rgba(255, 182, 193, 0.2);
 }
 
 .volume-slider {
@@ -355,19 +403,19 @@ const updateTargetTemp = (event: Event) => {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: #2196f3;
+  background: #FFB6C1;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.4);
+  box-shadow: 0 2px 8px rgba(255, 182, 193, 0.4);
 }
 
 .volume-slider::-moz-range-thumb {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: #2196f3;
+  background: #FFB6C1;
   cursor: pointer;
   border: none;
-  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.4);
+  box-shadow: 0 2px 8px rgba(255, 182, 193, 0.4);
 }
 
 .volume-labels {
@@ -380,12 +428,13 @@ const updateTargetTemp = (event: Event) => {
 
 /* 現在の設定 */
 .current-settings {
-  background: linear-gradient(135deg, #f3e5f5, #fce4ec);
-  border-radius: 12px;
-  padding: 16px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
 .setting-item {
@@ -395,31 +444,33 @@ const updateTargetTemp = (event: Event) => {
 }
 
 .setting-label {
-  font-size: 14px;
-  color: #555 /* コントラスト比改善 */;
+  font-size: 15px;
+  color: #A0826D;
 }
 
 .setting-value {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
-  color: #333;
+  color: #D4A574;
 }
 
 /* 開始ボタン */
 .start-button {
   width: 100%;
-  background: linear-gradient(135deg, #2196f3, #00bcd4);
+  background: linear-gradient(135deg, #FFB6C1 0%, #FF9AA2 100%);
   color: white;
-  padding: 18px;
-  border-radius: 12px;
-  font-size: 18px;
-  font-weight: bold;
-  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+  padding: 22px;
+  border-radius: 20px;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  box-shadow: 0 6px 20px rgba(255, 182, 193, 0.4);
+  transition: all 0.3s;
 }
 
 .start-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(33, 150, 243, 0.4);
+  box-shadow: 0 8px 24px rgba(255, 182, 193, 0.5);
 }
 
 /* 詳細設定トグル */
@@ -501,12 +552,12 @@ const updateTargetTemp = (event: Event) => {
 }
 
 .recommend-badge {
-  background: linear-gradient(135deg, #ff9800, #ff5722);
+  background: linear-gradient(135deg, #FFB6C1, #FF9AA2);
   color: white;
   font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-weight: 700;
 }
 
 .option-desc {
