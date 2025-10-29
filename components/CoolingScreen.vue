@@ -141,32 +141,19 @@ const handleStop = () => {
       </header>
 
       <main class="main">
-        <!-- 哺乳瓶アニメーションと温度表示 -->
-        <div class="visual-section">
-          <BottleAnimation
-            v-if="sessionStore.currentSession"
-            :current-temp="currentTemp"
-            :target-temp="sessionStore.currentSession.targetTemp"
-            :volume="sessionStore.currentSession.totalVolume"
-          />
-          <div class="temp-display">
-            <div class="current-temp">{{ currentTemp.toFixed(1) }}°C</div>
-            <div class="temp-arrow">↓</div>
-            <div class="target-temp">{{ sessionStore.currentSession?.targetTemp || 38 }}°C</div>
-          </div>
+        <!-- 現在温度（大きく表示） -->
+        <div class="current-temp-section">
+          <div class="current-temp-label">現在の温度</div>
+          <div class="current-temp-large">{{ currentTemp.toFixed(1) }}°C</div>
+          <div class="temp-arrow">↓</div>
+          <div class="target-temp-small">目標 {{ sessionStore.currentSession?.targetTemp || 38 }}°C</div>
         </div>
 
-        <!-- 温度グラフ -->
-        <TemperatureGraph
-          v-if="thermalResult && sessionStore.currentSession"
-          :initial-temp="thermalResult.initialMixTemp"
-          :current-temp="currentTemp"
-          :target-temp="sessionStore.currentSession.targetTemp"
-          :ambient-temp="thermalResult.ambientTemp"
-          :cooling-constant="thermalResult.coolingConstant"
-          :elapsed-seconds="elapsedSeconds"
-          :predicted-time="thermalResult.predictedTime"
-        />
+        <!-- 残り時間（大きく表示） -->
+        <div class="timer-section">
+          <div class="timer-label">残り時間</div>
+          <div class="timer-large">{{ remainingTimeDisplay }}</div>
+        </div>
 
         <!-- プログレスバー -->
         <div class="progress-container">
@@ -174,16 +161,19 @@ const handleStop = () => {
         </div>
         <div class="progress-label">{{ Math.round(progress) }}%</div>
 
-        <!-- 残り時間と冷却速度 -->
-        <div class="info-grid">
-          <div class="info-box">
-            <div class="info-label">残り時間</div>
-            <div class="info-value">{{ remainingTimeDisplay }}</div>
-          </div>
-          <div class="info-box">
-            <div class="info-label">冷却速度</div>
-            <div class="info-value">{{ Math.abs(coolingRate).toFixed(1) }}<span class="unit">°C/分</span></div>
-          </div>
+        <!-- 哺乳瓶アニメーション -->
+        <div class="bottle-section">
+          <BottleAnimation
+            v-if="sessionStore.currentSession"
+            :current-temp="currentTemp"
+            :target-temp="sessionStore.currentSession.targetTemp"
+            :volume="sessionStore.currentSession.totalVolume"
+          />
+        </div>
+
+        <!-- 冷却速度（小さく表示） -->
+        <div class="cooling-rate-small">
+          冷却速度: {{ Math.abs(coolingRate).toFixed(1) }}°C/分
         </div>
 
         <!-- ヒント -->
@@ -263,96 +253,100 @@ const handleStop = () => {
   margin-bottom: 12px;
 }
 
-.visual-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  margin-bottom: 16px;
+/* 現在温度セクション（大きく） */
+.current-temp-section {
+  text-align: center;
+  margin-bottom: 20px;
   flex-shrink: 0;
 }
 
-.temp-display {
-  text-align: center;
-  flex: 1;
+.current-temp-label {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
 }
 
-.current-temp {
-  font-size: 40px;
+.current-temp-large {
+  font-size: 64px;
   font-weight: bold;
   color: #2196f3;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
+  line-height: 1;
 }
 
 .temp-arrow {
-  font-size: 24px;
+  font-size: 28px;
   color: #999;
   margin-bottom: 4px;
 }
 
-.target-temp {
-  font-size: 32px;
-  font-weight: bold;
+.target-temp-small {
+  font-size: 18px;
   color: #4caf50;
+  font-weight: 600;
+}
+
+/* タイマーセクション（大きく） */
+.timer-section {
+  text-align: center;
+  margin-bottom: 20px;
+  flex-shrink: 0;
+}
+
+.timer-label {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.timer-large {
+  font-size: 56px;
+  font-weight: bold;
+  color: #f57c00;
+  line-height: 1;
 }
 
 .progress-container {
   width: 100%;
-  height: 12px;
+  height: 10px;
   background: #e0e0e0;
-  border-radius: 6px;
+  border-radius: 5px;
   overflow: hidden;
   margin-bottom: 4px;
-  margin-top: 12px;
   flex-shrink: 0;
 }
 
 .progress-bar {
   height: 100%;
   background: linear-gradient(135deg, #2196f3, #00bcd4);
-  border-radius: 6px;
+  border-radius: 5px;
   transition: width 0.5s ease;
 }
 
 .progress-label {
   text-align: center;
-  font-size: 12px;
-  color: #555 /* コントラスト比改善 */;
-  margin-bottom: 16px;
-  flex-shrink: 0;
-}
-
-.info-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 16px;
-  flex-shrink: 0;
-}
-
-.info-box {
-  background: linear-gradient(135deg, #fff3e0, #ffe0b2);
-  border-radius: 12px;
-  padding: 12px;
-  text-align: center;
-}
-
-.info-label {
   font-size: 11px;
-  color: #555 /* コントラスト比改善 */;
-  margin-bottom: 6px;
+  color: #777;
+  margin-bottom: 16px;
+  flex-shrink: 0;
 }
 
-.info-value {
-  font-size: 22px;
-  font-weight: bold;
-  color: #f57c00;
+/* 哺乳瓶セクション */
+.bottle-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-shrink: 0;
 }
 
-.info-value .unit {
+/* 冷却速度（小さく） */
+.cooling-rate-small {
+  text-align: center;
   font-size: 12px;
-  font-weight: normal;
-  margin-left: 2px;
+  color: #999;
+  margin-bottom: 12px;
+  flex-shrink: 0;
 }
 
 .hint-box {
@@ -441,30 +435,24 @@ const handleStop = () => {
     font-size: 18px;
   }
 
-  .visual-section {
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 12px;
+  .current-temp-section {
+    margin-bottom: 16px;
   }
 
-  .current-temp {
-    font-size: 36px;
+  .current-temp-large {
+    font-size: 52px;
   }
 
-  .target-temp {
-    font-size: 28px;
+  .target-temp-small {
+    font-size: 16px;
   }
 
-  .temp-arrow {
-    font-size: 20px;
+  .timer-section {
+    margin-bottom: 16px;
   }
 
-  .info-value {
-    font-size: 20px;
-  }
-
-  .info-box {
-    padding: 10px;
+  .timer-large {
+    font-size: 44px;
   }
 
   .hint-box {
