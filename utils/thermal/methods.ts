@@ -13,7 +13,7 @@ export const COOLING_METHODS: Record<string, CoolingMethod> = {
     description: '速くて節水、実用的',
     ambientTemp: 2, // °C (氷水の温度)
     velocity: 0.3, // m/s (攪拌による流速)
-    baseH: 104, // W/(m²·K) 基準熱伝達係数 (62°C→38°Cを約3分で冷却)
+    baseH: 260, // W/(m²·K) 基準熱伝達係数（実測値ベース調整: 氷水静置の1.65倍）
     velocityFactor: 1.5,
     recommendedPriority: 2,
   },
@@ -23,7 +23,7 @@ export const COOLING_METHODS: Record<string, CoolingMethod> = {
     description: '放置できて楽',
     ambientTemp: 2, // °C (氷水の温度)
     velocity: 0, // m/s (静止)
-    baseH: 63, // W/(m²·K) 自然対流のみ (62°C→38°Cを約10分で冷却)
+    baseH: 158, // W/(m²·K) 自然対流のみ (実測値に基づき調整: 55°C→38°Cを約4分で冷却)
     velocityFactor: 1.0,
     recommendedPriority: 1, // デフォルト
   },
@@ -33,7 +33,7 @@ export const COOLING_METHODS: Record<string, CoolingMethod> = {
     description: '氷なしで冷やす',
     ambientTemp: 15, // °C (水道水の温度)
     velocity: 0, // m/s (静止)
-    baseH: 58, // W/(m²·K) (62°C→38°Cを約15分で冷却)
+    baseH: 145, // W/(m²·K) (実測値ベース調整: 氷水静置より若干遅い)
     velocityFactor: 1.0,
     recommendedPriority: 3,
   },
