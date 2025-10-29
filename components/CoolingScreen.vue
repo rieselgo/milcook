@@ -224,39 +224,52 @@ const handleStop = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 12px;
+  overflow: hidden;
 }
 
 .container {
   max-width: 500px;
   width: 100%;
+  height: 100%;
+  max-height: 100vh;
   background: white;
   border-radius: 24px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  padding: 40px 30px;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 12px;
+  flex-shrink: 0;
 }
 
 .title {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: bold;
   color: #333;
 }
 
 .main {
-  margin-bottom: 40px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+  margin-bottom: 12px;
 }
 
 .visual-section {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 32px;
-  margin-bottom: 24px;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-shrink: 0;
 }
 
 .temp-display {
@@ -265,76 +278,79 @@ const handleStop = () => {
 }
 
 .current-temp {
-  font-size: 56px;
+  font-size: 40px;
   font-weight: bold;
   color: #2196f3;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .temp-arrow {
-  font-size: 32px;
+  font-size: 24px;
   color: #999;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .target-temp {
-  font-size: 40px;
+  font-size: 32px;
   font-weight: bold;
   color: #4caf50;
 }
 
 .progress-container {
   width: 100%;
-  height: 16px;
+  height: 12px;
   background: #e0e0e0;
-  border-radius: 8px;
+  border-radius: 6px;
   overflow: hidden;
-  margin-bottom: 8px;
-  margin-top: 24px;
+  margin-bottom: 4px;
+  margin-top: 12px;
+  flex-shrink: 0;
 }
 
 .progress-bar {
   height: 100%;
   background: linear-gradient(135deg, #2196f3, #00bcd4);
-  border-radius: 8px;
+  border-radius: 6px;
   transition: width 0.5s ease;
 }
 
 .progress-label {
   text-align: center;
-  font-size: 14px;
+  font-size: 12px;
   color: #555 /* コントラスト比改善 */;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
+  flex-shrink: 0;
 }
 
 .info-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 32px;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-shrink: 0;
 }
 
 .info-box {
   background: linear-gradient(135deg, #fff3e0, #ffe0b2);
   border-radius: 12px;
-  padding: 16px;
+  padding: 12px;
   text-align: center;
 }
 
 .info-label {
-  font-size: 12px;
+  font-size: 11px;
   color: #555 /* コントラスト比改善 */;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .info-value {
-  font-size: 28px;
+  font-size: 22px;
   font-weight: bold;
   color: #f57c00;
 }
 
 .info-value .unit {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: normal;
   margin-left: 2px;
 }
@@ -342,14 +358,15 @@ const handleStop = () => {
 .hint-box {
   background: linear-gradient(135deg, #e3f2fd, #bbdefb);
   border-radius: 12px;
-  padding: 16px;
+  padding: 12px;
   display: flex;
-  gap: 12px;
+  gap: 10px;
   align-items: flex-start;
+  flex-shrink: 0;
 }
 
 .hint-icon {
-  font-size: 32px;
+  font-size: 24px;
   flex-shrink: 0;
 }
 
@@ -358,31 +375,32 @@ const handleStop = () => {
 }
 
 .hint-title {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: #333;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .hint-desc {
-  font-size: 13px;
+  font-size: 12px;
   color: #555; /* コントラスト比改善: 白背景でWCAG AA準拠 */
 }
 
 .footer {
+  flex-shrink: 0;
 }
 
 .button-group {
   display: flex;
-  gap: 12px;
+  gap: 10px;
 }
 
 .pause-button,
 .stop-button {
   flex: 1;
-  padding: 14px;
+  padding: 12px;
   border-radius: 12px;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   border: none;
@@ -411,20 +429,56 @@ const handleStop = () => {
 
 @media (max-width: 480px) {
   .container {
-    padding: 30px 20px;
+    padding: 16px 12px;
+    border-radius: 20px;
+  }
+
+  .header {
+    margin-bottom: 8px;
+  }
+
+  .title {
+    font-size: 18px;
   }
 
   .visual-section {
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
+    margin-bottom: 12px;
   }
 
   .current-temp {
-    font-size: 48px;
+    font-size: 36px;
   }
 
   .target-temp {
-    font-size: 36px;
+    font-size: 28px;
+  }
+
+  .temp-arrow {
+    font-size: 20px;
+  }
+
+  .info-value {
+    font-size: 20px;
+  }
+
+  .info-box {
+    padding: 10px;
+  }
+
+  .hint-box {
+    padding: 10px;
+  }
+
+  .button-group {
+    gap: 8px;
+  }
+
+  .pause-button,
+  .stop-button {
+    padding: 10px;
+    font-size: 13px;
   }
 }
 </style>
