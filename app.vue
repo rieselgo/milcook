@@ -11,7 +11,7 @@ useHead({
   meta: [
     { name: 'description', content: '赤ちゃんのミルク作りをサポートする調乳タイマーアプリ' },
     { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-    { name: 'theme-color', content: '#FF6B35' },
+    { name: 'theme-color', content: '#FFB6C1' },
     { name: 'apple-mobile-web-app-capable', content: 'yes' },
     { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
     { name: 'apple-mobile-web-app-title', content: 'みるくっく' },
